@@ -1,0 +1,212 @@
+/* =========================================================
+   BASE.CSS — a fundação de TODAS as telas do cliente
+   ---------------------------------------------------------
+   Só entra aqui o que se repete em todas as páginas:
+   tokens (cores, fonte, medidas), reset, container, botões,
+   badges e campos de formulário.
+   Os componentes de cada tela ficam no loja.css.
+   ========================================================= */
+
+/* 1. TOKENS — valores tirados do protótipo do Figma */
+:root {
+  /* Marca */
+  --laranja: #D84D12;
+  --laranja-escuro: #B93F0C;   /* hover */
+  --laranja-suave: #FDEFE4;    /* fundo dos ícones e do card selecionado */
+  --carvao: #1A1C19;           /* hero, rodapé, botão escuro */
+
+  /* Neutros */
+  --fundo: #F5F4F0;
+  --branco: #FFFFFF;
+  --cinza-claro: #ECEBE6;      /* botão desativado, cabeçalho de tabela */
+  --borda: #E6E4DE;
+  --texto: #1A1C19;
+  --texto-suave: #6E6B64;
+  --texto-no-escuro: #C9C6BE;
+
+  /* Status */
+  --verde: #2E7D46;
+  --verde-fundo: #E8F3EA;
+  --vermelho: #C2361B;
+  --vermelho-fundo: #FDECEA;
+
+  /* Medidas */
+  --raio: 14px;                /* cards */
+  --raio-pequeno: 8px;         /* botões e campos */
+  --largura-max: 1200px;
+  --sombra: 0 1px 2px rgba(26, 28, 25, .05);
+  --sombra-hover: 0 12px 28px rgba(26, 28, 25, .10);
+}
+
+/* 2. RESET */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;               /* empurra o rodapé para o fim da tela */
+  flex-direction: column;
+}
+main { flex: 1; }
+
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+ul, ol { list-style: none; }
+
+/* Ícones SVG (desenhados pelo icones.js) herdam a cor do texto */
+.icone { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* Esconde da tela, mas o leitor de tela ainda lê */
+.so-leitor {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* 3. CONTAINER */
+.container {
+  width: 100%;
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+@media (min-width: 768px) { .container { padding: 0 32px; } }
+
+/* 4. TEXTOS REUTILIZÁVEIS */
+.sobretitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--laranja);
+}
+.titulo-pagina {
+  margin-top: 6px;
+  font-size: clamp(30px, 4.5vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+.subtitulo-pagina { margin-top: 6px; color: var(--texto-suave); }
+
+.link-laranja {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--laranja);
+  font-weight: 600;
+  font-size: 15px;
+}
+.link-laranja:hover { text-decoration: underline; }
+
+/* 5. BOTÕES — classe base + modificadores */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;            /* bom para o dedo no celular */
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: var(--raio-pequeno);
+  background: var(--laranja);
+  color: var(--branco);
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: background .2s, transform .15s, border-color .2s;
+}
+.btn:hover { background: var(--laranja-escuro); }
+.btn:active { transform: scale(.97); }
+
+.btn-branco { background: var(--branco); color: var(--texto); }
+.btn-branco:hover { background: var(--fundo); }
+
+.btn-escuro { background: var(--carvao); }
+.btn-escuro:hover { background: #000; }
+
+.btn-contorno { background: var(--branco); color: var(--texto); border-color: var(--borda); }
+.btn-contorno:hover { background: var(--fundo); }
+
+.btn-bloco { width: 100%; }
+
+/* Desativado: cinza e sem clique (ex.: produto indisponível) */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  background: var(--cinza-claro);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Foco visível para quem navega pelo teclado */
+:focus-visible {
+  outline: 3px solid rgba(216, 77, 18, .45);
+  outline-offset: 2px;
+}
+
+/* 6. BADGES (etiquetas de status) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge::before {               /* a bolinha antes do texto */
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.badge-verde    { background: var(--verde-fundo);    color: var(--verde); }
+.badge-laranja  { background: var(--laranja-suave);  color: var(--laranja); }
+.badge-vermelho { background: var(--vermelho-fundo); color: var(--vermelho); }
+.badge-cinza    { background: var(--cinza-claro);    color: var(--texto-suave); }
+
+/* 7. FORMULÁRIOS */
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo label { font-size: 14px; font-weight: 600; }
+
+.input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-pequeno);
+  background: var(--branco);
+  font-size: 15px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.input::placeholder { color: #A3A098; }
+.input:focus {
+  outline: none;
+  border-color: var(--laranja);
+  box-shadow: 0 0 0 3px rgba(216, 77, 18, .15);
+}
+textarea.input { min-height: 96px; resize: vertical; }
+
+/* Campo com erro (o JS coloca aria-invalid="true") */
+.input[aria-invalid="true"] { border-color: var(--vermelho); }
+.erro-campo { font-size: 13px; color: var(--vermelho); }
+.erro-campo:empty { display: none; }
+
+/* Caixa de aviso de erro geral do formulário */
+.alerta-erro {
+  padding: 12px 14px;
+  border-radius: var(--raio-pequeno);
+  background: var(--vermelho-fundo);
+  color: var(--vermelho);
+  font-size: 14px;
+}
+.alerta-erro:empty { display: none; }

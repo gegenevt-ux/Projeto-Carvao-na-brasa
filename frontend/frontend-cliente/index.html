@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carvão do Pedro — Brasa forte, churrasco de verdade</title>
+  <meta name="description" content="Carvão selecionado em Porto Velho. Escolha o pacote e peça para receber ou retirar.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/loja.css">
+</head>
+<body>
+  <!-- O layout.js troca estas duas divs pelo cabeçalho e rodapé -->
+  <div id="cabecalho"></div>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-imagem" aria-hidden="true"></div>
+      <div class="container hero-conteudo">
+        <p class="sobretitulo" id="hero-local"></p>
+        <h1>Brasa forte.<br>Churrasco de verdade.</h1>
+        <p class="hero-texto">Carvão selecionado para o seu próximo churrasco. Escolha o pacote e peça para receber ou retirar.</p>
+        <div class="hero-acoes">
+          <a class="btn" href="catalogo.html" id="btn-escolher">Escolher meu carvão</a>
+          <a class="btn btn-branco" href="cadastro.html" id="btn-criar-conta">Criar conta</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFÍCIOS -->
+    <section class="beneficios" aria-label="Por que comprar aqui">
+      <ul class="container beneficios-lista" id="beneficios"></ul>
+    </section>
+
+    <!-- DESTAQUES -->
+    <section class="secao">
+      <div class="container">
+        <div class="secao-topo">
+          <div>
+            <p class="sobretitulo">O churrasco começa aqui</p>
+            <h2>Escolha o tamanho da sua brasa.</h2>
+          </div>
+          <a class="link-laranja" href="catalogo.html" id="link-todos">Ver todos os produtos</a>
+        </div>
+        <div class="grade-produtos" id="destaques"></div>
+      </div>
+    </section>
+
+    <!-- CHAMADA (só para visitante) -->
+    <section class="cta" id="cta">
+      <div class="container cta-conteudo">
+        <span class="cta-icone" id="cta-icone"></span>
+        <div class="cta-texto">
+          <h2>Peça sem precisar mandar mensagem</h2>
+          <p>Crie sua conta, escolha o carvão e acompanhe seu pedido por aqui.</p>
+        </div>
+        <a class="btn btn-escuro" href="login.html" id="btn-cta">Entrar ou cadastrar-se</a>
+      </div>
+    </section>
+  </main>
+
+  <div id="rodape"></div>
+
+  <!-- A ORDEM IMPORTA: cada arquivo usa funções dos anteriores -->
+  <script src="js/icones.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/loja.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/paginas/inicio.js"></script>
+</body>
+</html>

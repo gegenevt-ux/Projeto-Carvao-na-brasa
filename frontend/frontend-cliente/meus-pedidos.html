@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus pedidos — Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/loja.css">
+</head>
+<body>
+  <div id="cabecalho"></div>
+
+  <main class="pagina">
+    <div class="container">
+      <p class="sobretitulo">Acompanhe sua brasa</p>
+      <h1 class="titulo-pagina">Meus pedidos</h1>
+      <p class="subtitulo-pagina">Veja os detalhes e o andamento de cada pedido.</p>
+
+      <div class="barra-pedidos">
+        <div class="chips" id="filtros" role="group" aria-label="Filtrar pedidos"></div>
+        <span id="contagem" aria-live="polite"></span>
+      </div>
+
+      <div class="lista-pedidos" id="lista-pedidos"></div>
+    </div>
+  </main>
+
+  <div id="rodape"></div>
+
+  <script src="js/icones.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/loja.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/pedidos.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/paginas/meus-pedidos.js"></script>
+</body>
+</html>
