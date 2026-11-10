@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta — Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/loja.css">
+</head>
+<body>
+  <div id="cabecalho"></div>
+
+  <main class="auth">
+    <div class="auth-card">
+      <span class="auth-icone" data-icone="chama"></span>
+      <h1>Criar conta</h1>
+      <p>Seu próximo churrasco começa aqui. Preencha seus dados para pedir.</p>
+
+      <form class="formulario" id="form-cadastro" novalidate>
+        <p class="alerta-erro" id="erro-geral" role="alert"></p>
+
+        <div class="campo">
+          <label for="nome">Nome</label>
+          <input class="input" type="text" id="nome" name="nome"
+                 placeholder="Seu nome completo" autocomplete="name" required minlength="3">
+          <span class="erro-campo" id="erro-nome"></span>
+        </div>
+
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input class="input" type="email" id="email" name="email"
+                 placeholder="seuemail@exemplo.com" autocomplete="email" required>
+          <span class="erro-campo" id="erro-email"></span>
+        </div>
+
+        <div class="campo">
+          <label for="whatsapp">WhatsApp</label>
+          <!-- inputmode="tel" abre o teclado numérico no celular -->
+          <input class="input" type="tel" id="whatsapp" name="whatsapp" inputmode="tel"
+                 placeholder="(69) 99999-9999" autocomplete="tel" required data-mascara="telefone">
+          <span class="erro-campo" id="erro-whatsapp"></span>
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="campo-senha">
+            <input class="input" type="password" id="senha" name="senha"
+                   placeholder="Crie uma senha" autocomplete="new-password" required minlength="6">
+            <button type="button" class="mostrar-senha" aria-label="Mostrar senha" data-alternar-senha="senha"></button>
+          </div>
+          <span class="erro-campo" id="erro-senha"></span>
+        </div>
+
+        <button class="btn btn-bloco" type="submit" data-icone-antes="seta">Criar conta</button>
+      </form>
+
+      <p class="auth-rodape"><a href="login.html" id="link-login">Tenho conta, fazer login</a></p>
+    </div>
+  </main>
+
+  <div id="rodape"></div>
+
+  <script src="js/icones.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/loja.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/formularios.js"></script>
+  <script src="js/paginas/cadastro.js"></script>
+</body>
+</html>
