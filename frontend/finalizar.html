@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar pedido — Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/loja.css">
+</head>
+<body>
+  <div id="cabecalho"></div>
+
+  <main class="pagina">
+    <div class="container">
+      <nav class="migalhas" aria-label="Você está em">
+        <a href="index.html">Início</a> <span data-icone="direita"></span>
+        <a href="catalogo.html">Loja</a> <span data-icone="direita"></span>
+        <span aria-current="page">Finalizar pedido</span>
+      </nav>
+
+      <h1 class="titulo-pagina" style="margin-top: 20px">Finalizar pedido</h1>
+      <p class="subtitulo-pagina">Falta pouco para a brasa. Confira os dados e confirme seu pedido.</p>
+
+      <ol class="etapas" aria-label="Etapas da compra">
+        <li><a href="carrinho.html">01 Carrinho</a></li>
+        <li data-icone="direita" aria-hidden="true"></li>
+        <li aria-current="step">02 Dados do pedido</li>
+        <li data-icone="direita" aria-hidden="true"></li>
+        <li>03 Confirmação</li>
+      </ol>
+
+      <div class="duas-colunas">
+        <form class="coluna-forms" id="form-pedido" novalidate>
+
+          <!-- 1. Como receber -->
+          <section class="painel painel-corpo">
+            <h2 id="titulo-receber">Como você quer receber?</h2>
+            <!-- fieldset agrupa os rádios: o leitor de tela lê a pergunta junto -->
+            <fieldset class="opcoes-recebimento" aria-labelledby="titulo-receber" style="border: 0">
+              <div class="opcao">
+                <input type="radio" name="recebimento" id="op-retirada" value="retirada">
+                <label for="op-retirada">
+                  <span data-icone="loja"></span>
+                  <strong>Retirada</strong>
+                  <small class="gratis">Grátis · na loja</small>
+                </label>
+              </div>
+              <div class="opcao">
+                <input type="radio" name="recebimento" id="op-entrega" value="entrega" checked>
+                <label for="op-entrega">
+                  <span data-icone="caminhao"></span>
+                  <strong>Entrega</strong>
+                  <small id="texto-taxa"></small>
+                </label>
+              </div>
+            </fieldset>
+            <div class="caixa-info" id="info-recebimento"></div>
+          </section>
+
+          <!-- 2. Dados + endereço -->
+          <section class="painel painel-corpo">
+            <h2>Seus dados</h2>
+            <div class="grade-campos">
+              <div class="campo">
+                <label for="nome">Nome</label>
+                <input class="input" id="nome" name="nome" autocomplete="name" required minlength="3">
+                <span class="erro-campo" id="erro-nome"></span>
+              </div>
+              <div class="campo">
+                <label for="whatsapp">WhatsApp</label>
+                <input class="input" type="tel" id="whatsapp" name="whatsapp" inputmode="tel"
+                       autocomplete="tel" required data-mascara="telefone">
+                <span class="erro-campo" id="erro-whatsapp"></span>
+              </div>
+            </div>
+
+            <!-- Some quando a pessoa escolhe "Retirada" -->
+            <div class="separador" id="bloco-endereco">
+              <h3>Endereço de entrega</h3>
+              <div class="grade-campos endereco">
+                <div class="campo">
+                  <label for="rua">Rua / avenida</label>
+                  <input class="input" id="rua" name="rua" autocomplete="address-line1" required>
+                  <span class="erro-campo" id="erro-rua"></span>
+                </div>
+                <div class="campo">
+                  <label for="numero">Número</label>
+                  <input class="input" id="numero" name="numero" inputmode="numeric" required>
+                  <span class="erro-campo" id="erro-numero"></span>
+                </div>
+              </div>
+              <div class="grade-campos">
+                <div class="campo">
+                  <label for="bairro">Bairro</label>
+                  <input class="input" id="bairro" name="bairro" required>
+                  <span class="erro-campo" id="erro-bairro"></span>
+                </div>
+                <div class="campo">
+                  <label for="cidade">Cidade / UF</label>
+                  <!-- readonly: só entregamos em Porto Velho -->
+                  <input class="input" id="cidade" value="Porto Velho / RO" readonly>
+                </div>
+                <div class="campo largo">
+                  <label for="complemento">Complemento (opcional)</label>
+                  <input class="input" id="complemento" name="complemento" placeholder="Casa, apartamento ou referência">
+                </div>
+              </div>
+            </div>
+
+            <div class="grade-campos">
+              <div class="campo largo">
+                <label for="observacao">Observação (opcional)</label>
+                <textarea class="input" id="observacao" name="observacao" maxlength="300"
+                          placeholder="Quer deixar alguma orientação sobre o pedido?"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <p><a class="link-laranja" href="carrinho.html"><span data-icone="voltar"></span> Voltar ao carrinho</a></p>
+        </form>
+
+        <!-- O botão fica FORA do <form>, mas o atributo form="form-pedido" liga os dois -->
+        <aside class="painel painel-corpo resumo" aria-label="Resumo do pedido">
+          <h2>Resumo do pedido</h2>
+          <ul class="resumo-itens" id="resumo-itens"></ul>
+          <p class="linha-valor"><span id="rotulo-subtotal"></span><strong id="valor-subtotal"></strong></p>
+          <p class="linha-valor" id="linha-taxa"><span id="rotulo-taxa"></span><strong id="valor-taxa"></strong></p>
+          <p class="resumo-total"><span>Total</span><strong id="valor-total" aria-live="polite"></strong></p>
+          <p class="aviso-pagamento"><span data-icone="carteira"></span> O pagamento é feito na entrega ou na retirada</p>
+          <button class="btn btn-bloco" type="submit" form="form-pedido" data-icone-antes="check">Confirmar pedido</button>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="rodape"></div>
+
+  <script src="js/icones.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/loja.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/pedidos.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/formularios.js"></script>
+  <script src="js/paginas/finalizar.js"></script>
+</body>
+</html>

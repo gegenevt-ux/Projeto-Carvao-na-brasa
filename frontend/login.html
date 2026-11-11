@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar — Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/loja.css">
+</head>
+<body>
+  <div id="cabecalho"></div>
+
+  <main class="auth">
+    <div class="auth-card">
+      <span class="auth-icone" data-icone="chama"></span>
+      <h1>Entrar</h1>
+      <p>Bom ter você por aqui. Entre para fazer e acompanhar seus pedidos.</p>
+
+      <!-- novalidate: a validação é feita pelo nosso JS, com mensagens em português -->
+      <form class="formulario" id="form-login" novalidate>
+        <p class="alerta-erro" id="erro-geral" role="alert"></p>
+
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input class="input" type="email" id="email" name="email"
+                 placeholder="seuemail@exemplo.com" autocomplete="email" required>
+          <span class="erro-campo" id="erro-email"></span>
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="campo-senha">
+            <input class="input" type="password" id="senha" name="senha"
+                   placeholder="Digite sua senha" autocomplete="current-password" required>
+            <button type="button" class="mostrar-senha" aria-label="Mostrar senha" data-alternar-senha="senha"></button>
+          </div>
+          <span class="erro-campo" id="erro-senha"></span>
+        </div>
+
+        <button class="btn btn-bloco" type="submit" data-icone-antes="seta">Entrar</button>
+      </form>
+
+      <p class="auth-rodape">Não é cliente? <a href="cadastro.html" id="link-cadastro">Cadastre-se</a></p>
+      <p class="dica-demo">Para testar: <strong>joao@exemplo.com</strong> · senha <strong>123456</strong></p>
+    </div>
+  </main>
+
+  <div id="rodape"></div>
+
+  <script src="js/icones.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/loja.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/formularios.js"></script>
+  <script src="js/paginas/login.js"></script>
+</body>
+</html>
