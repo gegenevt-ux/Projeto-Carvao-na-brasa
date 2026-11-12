@@ -17,7 +17,7 @@ const PRODUTOS = [
     peso: 3,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-3kg.jpeg'
+    imagem: 'assets/img/produto-tradicional-3kg.jpg'
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const PRODUTOS = [
     peso: 5,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-5kg.jpeg'
+    imagem: 'assets/img/produto-tradicional-5kg.jpg'
   },
   {
     id: 3,
@@ -37,7 +37,7 @@ const PRODUTOS = [
     peso: 3,
     categoria: 'Misto',
     disponivel: 1,
-    imagem: 'assets/img/produto-misto-3kg.jpeg'
+    imagem: 'assets/img/produto-misto-5kg.jpeg'
   },
     {
     id: 4,
@@ -47,7 +47,7 @@ const PRODUTOS = [
     peso: 3,
     categoria: 'Misto',
     disponivel: 1,
-    imagem: 'assets/img/produto-misto-5kg.jpeg'
+    imagem: 'assets/img/produto-misto-10kg.jpeg'
   },
   {
     id: 5,
