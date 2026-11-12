@@ -17,7 +17,7 @@ const PRODUTOS = [
     peso: 3,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-3kg.jpg'
+    imagem: 'assets/img/produto-tradicional-3kg.jpeg'
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const PRODUTOS = [
     peso: 5,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-25kg.jpg'
+    imagem: 'assets/img/produto-tradicional-25kg.jpeg'
   },
   {
     id: 3,
