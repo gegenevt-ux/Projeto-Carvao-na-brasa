@@ -17,7 +17,11 @@ const PRODUTOS = [
     peso: 3,
     categoria: 'Tradicional',
     disponivel: 1,
+<<<<<<< HEAD
     imagem: 'assets/img/produto-tradicional-3kg.jpg'
+=======
+    imagem: 'assets/img/produto-tradicional-3kg.jpeg'
+>>>>>>> 6405cc6a1483fc92bdcf2bf277138859c5df4342
   },
   {
     id: 2,
@@ -27,7 +31,11 @@ const PRODUTOS = [
     peso: 5,
     categoria: 'Tradicional',
     disponivel: 1,
+<<<<<<< HEAD
     imagem: 'assets/img/produto-tradicional-25kg.jpg'
+=======
+    imagem: 'assets/img/produto-tradicional-5kg.jpeg'
+>>>>>>> 6405cc6a1483fc92bdcf2bf277138859c5df4342
   },
   {
     id: 3,
@@ -37,7 +45,11 @@ const PRODUTOS = [
     peso: 10,
     categoria: 'Premium',
     disponivel: 0,
+<<<<<<< HEAD
     imagem: 'assets/img/produto-premium-10kg.jpg'
+=======
+    imagem: 'assets/img/produto-premium-10kg.jpeg'
+>>>>>>> 6405cc6a1483fc92bdcf2bf277138859c5df4342
   }
 ];
 
