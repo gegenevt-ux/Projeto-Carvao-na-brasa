@@ -1,18 +1,14 @@
-const Database = require('better-sqlite3');
-const fs = require('fs');
+require('dotenv').config();
+const { createClient } = require('@libsql/client');
 const path = require('path');
 
-const caminhoBanco = path.join(__dirname, '..', '..', 'banco', 'carvao.db');
-const caminhoSql = path.join(__dirname, '..', '..', 'banco', 'criar_banco.sql');
+const usandoTurso = Boolean(process.env.TURSO_DATABASE_URL);
+const arquivoLocal = path.resolve(__dirname, '../../banco/banco.db');
 
-const bancoJaExiste = fs.existsSync(caminhoBanco);
-
-const db = new Database(caminhoBanco);
-db.pragma('foreign_keys = ON');
-
-if (!bancoJaExiste) {
-  db.exec(fs.readFileSync(caminhoSql, 'utf8'));
-  console.log('Banco criado a partir do criar_banco.sql');
-}
+const db = createClient(
+  usandoTurso
+    ? { url: process.env.TURSO_DATABASE_URL, authToken: process.env.TURSO_AUTH_TOKEN }
+    : { url: 'file:' + arquivoLocal }
+);
 
 module.exports = db;

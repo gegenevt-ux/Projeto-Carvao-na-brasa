@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const router = express.Router();
 
+const umaLinha = async (sql, args = []) => (await db.execute({ sql, args })).rows[0];
+
 router.post('/cadastro', async (req, res) => {
   const { nome, email, whatsapp, senha } = req.body;
 
@@ -14,8 +16,8 @@ router.post('/cadastro', async (req, res) => {
 
   try {
     const jaExiste =
-      db.prepare('SELECT id FROM cliente WHERE email = ?').get(email) ||
-      db.prepare('SELECT id FROM comerciante WHERE email = ?').get(email);
+      (await umaLinha('SELECT id FROM cliente WHERE email = ?', [email])) ||
+      (await umaLinha('SELECT id FROM comerciante WHERE email = ?', [email]));
 
     if (jaExiste) {
       return res.status(409).json({ erro: 'E-mail já cadastrado' });
@@ -23,13 +25,14 @@ router.post('/cadastro', async (req, res) => {
 
     const senhaCriptografada = await bcrypt.hash(senha, 10);
 
-    const resultado = db
-      .prepare('INSERT INTO cliente (nome, email, senha, whatsapp) VALUES (?, ?, ?, ?)')
-      .run(nome, email, senhaCriptografada, whatsapp);
+    const resultado = await db.execute({
+      sql: 'INSERT INTO cliente (nome, email, senha, whatsapp) VALUES (?, ?, ?, ?)',
+      args: [nome, email, senhaCriptografada, whatsapp]
+    });
 
     res.status(201).json({
       mensagem: 'Cliente cadastrado com sucesso',
-      id: resultado.lastInsertRowid
+      id: Number(resultado.lastInsertRowid)
     });
   } catch (erro) {
     console.error(erro);
@@ -45,13 +48,13 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    const comerciante = db
-      .prepare('SELECT id, nome, email, senha FROM comerciante WHERE email = ?')
-      .get(email);
+    const comerciante = await umaLinha(
+      'SELECT id, nome, email, senha FROM comerciante WHERE email = ?', [email]
+    );
 
     const cliente = comerciante
       ? null
-      : db.prepare('SELECT id, nome, email, senha FROM cliente WHERE email = ?').get(email);
+      : await umaLinha('SELECT id, nome, email, senha FROM cliente WHERE email = ?', [email]);
 
     const usuario = comerciante || cliente;
     const tipo = comerciante ? 'comerciante' : 'cliente';
@@ -63,7 +66,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: usuario.id, email: usuario.email, tipo },
+      { id: Number(usuario.id), email: usuario.email, tipo },
       process.env.JWT_SECRET,
       { expiresIn: '2h' }
     );
@@ -72,7 +75,7 @@ router.post('/login', async (req, res) => {
       mensagem: 'Login realizado com sucesso',
       token,
       tipo,
-      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email }
+      usuario: { id: Number(usuario.id), nome: usuario.nome, email: usuario.email }
     });
   } catch (erro) {
     console.error(erro);
