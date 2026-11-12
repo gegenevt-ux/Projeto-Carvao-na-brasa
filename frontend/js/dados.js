@@ -27,10 +27,30 @@ const PRODUTOS = [
     peso: 5,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-25kg.jpeg'
+    imagem: 'assets/img/produto-tradicional-5kg.jpeg'
   },
   {
     id: 3,
+    nome: 'Carvão vegetal',
+    descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
+    preco: 18.0,
+    peso: 3,
+    categoria: 'Misto',
+    disponivel: 1,
+    imagem: 'assets/img/produto-misto-3kg.jpeg'
+  },
+    {
+    id: 4,
+    nome: 'Carvão vegetal',
+    descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
+    preco: 18.0,
+    peso: 3,
+    categoria: 'Misto',
+    disponivel: 1,
+    imagem: 'assets/img/produto-misto-5kg.jpeg'
+  },
+  {
+    id: 5,
     nome: 'Carvão vegetal premium',
     descricao: 'Um pacote maior para churrascos que pedem mais tempo de brasa. Carvão selecionado em pedaços grandes, pensado para encontros com a turma toda.',
     preco: 52.0,
@@ -40,6 +60,8 @@ const PRODUTOS = [
     imagem: 'assets/img/produto-premium-10kg.jpeg'
   }
 ];
+
+
 
 /* Dados da loja usados no rodapé, na retirada e na taxa de entrega.
    (No banco isso vem da tabela "comerciante".) */
