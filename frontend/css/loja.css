@@ -161,7 +161,7 @@
   position: absolute;
   inset: 0 0 0 auto;
   width: 60%;
-  background: url('../assets/img/hero-brasas.svg') center / cover no-repeat;
+  background: url('../assets/img/hero-brasas.png') center / cover no-repeat;
 }
 .hero-imagem::before {
   content: "";
