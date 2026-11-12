@@ -8,18 +8,19 @@ const authRoutes = require('./routes/auth');
 // os dados que chegam em formato JSON (é assim que o site manda os pedidos).
 const app = express();
 app.use(express.json());
-app.use('/auth', authRoutes);
 
 // O site e a API moram em endereços diferentes na Vercel.
 // Por segurança, o navegador bloqueia essa conversa, a não ser que a API diga "pode vir".
 // Avisa o navegador que o site tem permissão de falar com a gente.
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
 });
+
+app.use('/auth', authRoutes);
 
 // A taxa de entrega fica guardada aqui, do nosso lado.
 // Se ela viesse do site, qualquer pessoa esperta poderia mudar o valor e pagar menos.
