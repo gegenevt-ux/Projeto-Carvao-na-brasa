@@ -17,7 +17,7 @@ const PRODUTOS = [
     peso: 3,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/carvao-3kg.svg'
+    imagem: 'assets/img/produto-tradicional-3kg.svg'
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const PRODUTOS = [
     peso: 5,
     categoria: 'Tradicional',
     disponivel: 1,
-    imagem: 'assets/img/carvao-5kg.svg'
+    imagem: 'assets/img/produto-tradicional-5kg.svg'
   },
   {
     id: 3,
@@ -37,7 +37,7 @@ const PRODUTOS = [
     peso: 10,
     categoria: 'Premium',
     disponivel: 0,
-    imagem: 'assets/img/carvao-10kg.svg'
+    imagem: 'assets/img/produto-premium-10kg.svg'
   }
 ];
 
