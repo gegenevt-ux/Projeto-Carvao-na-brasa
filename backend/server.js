@@ -15,13 +15,13 @@ app.use(express.json());
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
 });
 
 app.use('/auth', authRoutes);
-
+app.use('/produtos', require('./routes/produtos'));
 // A taxa de entrega fica guardada aqui, do nosso lado.
 // Se ela viesse do site, qualquer pessoa esperta poderia mudar o valor e pagar menos.
 // Também limitamos cada item a 20 pacotes, pra ninguém pedir 9999 sem querer.
@@ -91,15 +91,7 @@ app.get('/', (req, res) => {
     res.send('API do Projeto Carvão na Brasa rodando!');
 });
 
-// Quando a loja pede a lista de produtos, a gente busca no banco e devolve todos.
-app.get('/produtos', async (req, res) => {
-    try {
-        res.json(await consultar('SELECT * FROM produto ORDER BY id'));
-    } catch (err) {
-        console.error('Erro ao buscar produtos:', err);
-        res.status(500).json({ erro: 'Não foi possível buscar os produtos.' });
-    }
-});
+
 
 // Aqui é onde o pedido do cliente chega.
 // Antes de salvar qualquer coisa, a gente confere tudo com calma.
