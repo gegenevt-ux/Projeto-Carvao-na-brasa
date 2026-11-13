@@ -1,4 +1,4 @@
 node_modules/
-banco/banco.db
-banco/banco.db-*
 .env
+*.db
+banco/banco.db-*

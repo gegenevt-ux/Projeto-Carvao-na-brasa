@@ -2,6 +2,7 @@ const express = require('express');
 const { createClient } = require('@libsql/client');
 const fs = require('fs');
 const path = require('path');
+const authRoutes = require('./routes/auth');
 
 // Aqui nasce a nossa API. A linha de baixo ensina ela a entender
 // os dados que chegam em formato JSON (é assim que o site manda os pedidos).
@@ -13,11 +14,13 @@ app.use(express.json());
 // Avisa o navegador que o site tem permissão de falar com a gente.
 app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
 });
+
+app.use('/auth', authRoutes);
 
 // A taxa de entrega fica guardada aqui, do nosso lado.
 // Se ela viesse do site, qualquer pessoa esperta poderia mudar o valor e pagar menos.
