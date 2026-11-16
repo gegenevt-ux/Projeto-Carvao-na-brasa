@@ -34,7 +34,7 @@ const PRODUTOS = [
     nome: 'Carvão vegetal',
     descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
     preco: 18.0,
-    peso: 3,
+    peso: 5,
     categoria: 'Misto',
     disponivel: 1,
     imagem: 'assets/img/produto-misto-5kg.jpeg'
@@ -44,9 +44,9 @@ const PRODUTOS = [
     nome: 'Carvão vegetal',
     descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
     preco: 18.0,
-    peso: 3,
+    peso: 10,
     categoria: 'Misto',
-    disponivel: 1,
+    disponivel: 0,
     imagem: 'assets/img/produto-misto-10kg.jpeg'
   },
   {
@@ -56,7 +56,7 @@ const PRODUTOS = [
     preco: 52.0,
     peso: 10,
     categoria: 'Premium',
-    disponivel: 0,
+    disponivel: 1,
     imagem: 'assets/img/produto-premium-10kg.jpeg'
   }
 ];

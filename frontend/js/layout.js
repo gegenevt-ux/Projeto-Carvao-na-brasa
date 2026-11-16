@@ -72,8 +72,6 @@ function montarRodape(completo = false) {
     : `<strong class="rodape-nome">CARVÃO DO PEDRO</strong>`;
   const fim = completo
     ? `<div class="rodape-fim container">
-         <span>Carvão do Pedro · Porto Velho, RO</span>
-         <span>Feito para reunir em volta da brasa.</span>
        </div>`
     : '';
 
@@ -85,7 +83,7 @@ function montarRodape(completo = false) {
           ${LOJA.endereco}<br>
           <span>${LOJA.telefone} · ${LOJA.horario}</span>
         </address>
-        <p class="rodape-nota">Endereço, telefone e horário ilustrativos. Dados de exemplo.</p>
+        <p class="rodape-nota">©2026 Carvão do Pedro. Todos os direitos reservados.</p>
       </div>
       ${fim}
     </footer>`;
