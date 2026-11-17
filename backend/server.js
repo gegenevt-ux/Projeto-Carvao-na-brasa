@@ -32,6 +32,8 @@ app.use('/auth', authRoutes);
 app.use('/produtos', require('./routes/produtos'));
 app.use('/pedidos', pedidosRoutes);
 
+app.use('/comercio', require('./routes/comercio'));  //Dados da loja
+
 // Endereço de teste: quando você abre o link da API, aparece essa frase.
 // Se ela aparecer, a API está no ar.
 app.get('/', (req, res) => {
