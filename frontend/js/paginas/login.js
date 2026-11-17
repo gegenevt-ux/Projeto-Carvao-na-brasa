@@ -17,18 +17,24 @@ const form = document.getElementById('form-login');
 const erroGeral = document.getElementById('erro-geral');
 ativarValidacaoAoVivo(form);
 
-form.addEventListener('submit', (evento) => {
+form.addEventListener('submit', async (evento) => {
   evento.preventDefault();          // não recarrega a página
   erroGeral.textContent = '';
 
   if (!validarFormulario(form)) return;
 
-  const resultado = entrar(form.email.value, form.senha.value);
-  if (!resultado.ok) {
-    erroGeral.textContent = resultado.erro;
+  try {
+    const resultado = await entrar(form.email.value, form.senha.value);
+    if (!resultado.ok) {
+      erroGeral.textContent = resultado.erro;
+      form.senha.value = '';
+      form.senha.focus();
+      return;
+    }
+    location.href = destinoDepoisDoLogin();
+  } catch (erro) {
+    erroGeral.textContent = erro.message;
     form.senha.value = '';
     form.senha.focus();
-    return;
   }
-  location.href = destinoDepoisDoLogin();
 });

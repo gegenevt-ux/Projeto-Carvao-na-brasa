@@ -5,19 +5,23 @@
 montarLayout('produtos');
 
 const conteudo = document.getElementById('conteudo-produto');
-const produto = buscarProduto(parametroDaURL('id'));
-
-/* 1. Produto não existe (id errado na URL) */
-if (!produto) {
-  conteudo.innerHTML = `
-    <div class="estado-vazio">
-      <strong>Produto não encontrado</strong>
-      Ele pode ter saído do catálogo.
-      <br><a class="btn" href="catalogo.html">Ver produtos</a>
-    </div>`;
-} else {
-  desenharProduto(produto);
-}
+carregarProdutos()
+  .then(() => {
+    const produto = buscarProduto(parametroDaURL('id'));
+    if (!produto) {
+      conteudo.innerHTML = `
+        <div class="estado-vazio">
+          <strong>Produto não encontrado</strong>
+          Ele pode ter saído do catálogo.
+          <br><a class="btn" href="catalogo.html">Ver produtos</a>
+        </div>`;
+    } else {
+      desenharProduto(produto);
+    }
+  })
+  .catch(erro => {
+    conteudo.innerHTML = `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
+  });
 
 function desenharProduto(produto) {
   const disponivel = produto.disponivel === 1;

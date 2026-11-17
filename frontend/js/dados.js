@@ -1,65 +1,37 @@
-/* =========================================================
-   DADOS.JS — produtos e informações da loja
-   ---------------------------------------------------------
-   Os campos do produto têm os MESMOS nomes da tabela
-   "produto" do banco (banco/criar_banco.sql): id, nome,
-   descricao, preco, peso, categoria, disponivel, imagem.
-   Quando a API existir, esta lista vira um:
-       const PRODUTOS = await fetch('/api/produtos').then(r => r.json());
-   ========================================================= */
+let PRODUTOS = [];
 
-const PRODUTOS = [
-  {
-    id: 1,
-    nome: 'Carvão vegetal',
-    descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
-    preco: 18.0,
-    peso: 3,
-    categoria: 'Tradicional',
-    disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-3kg.jpg'
-  },
-  {
-    id: 2,
-    nome: 'Carvão vegetal',
-    descricao: 'O tamanho certo para reunir a turma ao redor da churrasqueira. Carvão selecionado em pedaços, com brasa duradoura para você aproveitar cada momento.',
-    preco: 28.0,
-    peso: 5,
-    categoria: 'Tradicional',
-    disponivel: 1,
-    imagem: 'assets/img/produto-tradicional-5kg.jpg'
-  },
-  {
-    id: 3,
-    nome: 'Carvão vegetal',
-    descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
-    preco: 18.0,
-    peso: 5,
-    categoria: 'Misto',
-    disponivel: 1,
-    imagem: 'assets/img/produto-misto-5kg.jpeg'
-  },
-    {
-    id: 4,
-    nome: 'Carvão vegetal',
-    descricao: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',
-    preco: 18.0,
-    peso: 10,
-    categoria: 'Misto',
-    disponivel: 0,
-    imagem: 'assets/img/produto-misto-10kg.jpeg'
-  },
-  {
-    id: 5,
-    nome: 'Carvão vegetal premium',
-    descricao: 'Um pacote maior para churrascos que pedem mais tempo de brasa. Carvão selecionado em pedaços grandes, pensado para encontros com a turma toda.',
-    preco: 52.0,
-    peso: 10,
-    categoria: 'Premium',
-    disponivel: 1,
-    imagem: 'assets/img/produto-premium-10kg.jpeg'
+async function carregarProdutos() {
+  const produtos = await requisicaoAPI('/produtos');
+  if (!Array.isArray(produtos)) {
+    throw new Error('A API retornou uma lista de produtos inválida.');
   }
-];
+
+  const imagensLocais = {
+    'tradicional-3': 'assets/img/produto-tradicional-3kg.jpg',
+    'tradicional-5': 'assets/img/produto-tradicional-5kg.jpg',
+    'misto-5': 'assets/img/produto-misto-5kg.jpeg',
+    'misto-10': 'assets/img/produto-misto-10kg.jpeg',
+    'premium-10': 'assets/img/produto-premium-10kg.jpeg'
+  };
+
+  PRODUTOS = produtos.map(produto => {
+    const chaveImagem = `${String(produto.categoria || '').toLowerCase()}-${Number(produto.peso)}`;
+    const imagemAPI = String(produto.imagem || '');
+    const imagem = /^https?:\/\//i.test(imagemAPI)
+      ? imagemAPI
+      : imagensLocais[chaveImagem] || imagemAPI || 'assets/favicon.svg';
+    return {
+      ...produto,
+      id: Number(produto.id),
+      preco: Number(produto.preco),
+      peso: Number(produto.peso),
+      disponivel: Number(produto.disponivel),
+      imagem
+    };
+  });
+
+  return PRODUTOS;
+}
 
 
 

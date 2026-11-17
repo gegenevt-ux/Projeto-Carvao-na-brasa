@@ -49,12 +49,12 @@ router.post('/login', async (req, res) => {
 
   try {
     const comerciante = await umaLinha(
-      'SELECT id, nome, email, senha FROM comerciante WHERE email = ?', [email]
+      'SELECT id, nome, email, senha, telefone FROM comerciante WHERE email = ?', [email]
     );
 
     const cliente = comerciante
       ? null
-      : await umaLinha('SELECT id, nome, email, senha FROM cliente WHERE email = ?', [email]);
+      : await umaLinha('SELECT id, nome, email, senha, whatsapp FROM cliente WHERE email = ?', [email]);
 
     const usuario = comerciante || cliente;
     const tipo = comerciante ? 'comerciante' : 'cliente';
@@ -75,7 +75,12 @@ router.post('/login', async (req, res) => {
       mensagem: 'Login realizado com sucesso',
       token,
       tipo,
-      usuario: { id: Number(usuario.id), nome: usuario.nome, email: usuario.email }
+      usuario: {
+        id: Number(usuario.id),
+        nome: usuario.nome,
+        email: usuario.email,
+        whatsapp: comerciante ? usuario.telefone : usuario.whatsapp
+      }
     });
   } catch (erro) {
     console.error(erro);

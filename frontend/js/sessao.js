@@ -1,84 +1,49 @@
-/* =========================================================
-   SESSAO.JS — cadastro, login e "quem está logado"
-   ---------------------------------------------------------
-   ⚠️ SIMULAÇÃO: enquanto o backend não tem as rotas de
-   login, os clientes ficam salvos no localStorage do
-   navegador. Isso é só para o protótipo funcionar.
-   No sistema real:
-     - cadastrar() vira  POST /api/clientes
-     - entrar()    vira  POST /api/login
-     - a senha NUNCA fica no navegador (o backend guarda
-       a senha criptografada, com bcrypt por exemplo).
-   Os campos seguem a tabela "cliente": nome, email,
-   senha, whatsapp.
-   ========================================================= */
-
-const CHAVE_CLIENTES = 'carvao_clientes';
 const CHAVE_SESSAO = 'carvao_sessao';
 
-/* Cliente de demonstração, para testar sem se cadastrar */
-const CLIENTE_DEMO = {
-  id: 1,
-  nome: 'João da Silva',
-  email: 'joao@exemplo.com',
-  senha: '123456',
-  whatsapp: '(69) 99999-1234'
-};
-
-/* --- Clientes --- */
-function listarClientes() {
-  return lerJSON(CHAVE_CLIENTES, [CLIENTE_DEMO]);
-}
-
-function cadastrar({ nome, email, whatsapp, senha }) {
-  const clientes = listarClientes();
+async function cadastrar({ nome, email, whatsapp, senha }) {
   const emailNormalizado = email.trim().toLowerCase();
+  await requisicaoAPI('/auth/cadastro', {
+    method: 'POST',
+    body: JSON.stringify({
+      nome: nome.trim(),
+      email: emailNormalizado,
+      whatsapp: whatsapp.trim(),
+      senha
+    })
+  });
+  const resultado = await entrar(emailNormalizado, senha);
+  if (!resultado.ok) throw new Error(resultado.erro);
+  const sessao = clienteLogado();
+  iniciarSessao({ ...sessao, whatsapp: whatsapp.trim() }, sessao.token);
+  return { ok: true };
+}
 
-  if (clientes.some(c => c.email === emailNormalizado)) {
-    return { ok: false, erro: 'Já existe uma conta com este e-mail.' };
+async function entrar(email, senha) {
+  const resposta = await requisicaoAPI('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email: email.trim().toLowerCase(), senha })
+  });
+  if (resposta.tipo !== 'cliente') {
+    return { ok: false, erro: 'Esta área está disponível apenas para clientes.' };
   }
-
-  const novo = {
-    id: Math.max(...clientes.map(c => c.id)) + 1,
-    nome: nome.trim(),
-    email: emailNormalizado,
-    whatsapp: whatsapp.trim(),
-    senha
-  };
-  salvarJSON(CHAVE_CLIENTES, [...clientes, novo]);
-  iniciarSessao(novo);
+  iniciarSessao({ ...resposta.usuario, tipo: resposta.tipo }, resposta.token);
   return { ok: true };
 }
 
-/* --- Login / logout --- */
-function entrar(email, senha) {
-  const cliente = listarClientes().find(
-    c => c.email === email.trim().toLowerCase() && c.senha === senha
-  );
-  if (!cliente) return { ok: false, erro: 'E-mail ou senha incorretos.' };
-  iniciarSessao(cliente);
-  return { ok: true };
-}
-
-function iniciarSessao(cliente) {
-  // Guardamos só o necessário. Nunca a senha.
-  const { id, nome, email, whatsapp } = cliente;
-  salvarJSON(CHAVE_SESSAO, { id, nome, email, whatsapp });
+function iniciarSessao(cliente, token) {
+  localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ ...cliente, token }));
 }
 
 function sair() {
-  try { localStorage.removeItem(CHAVE_SESSAO); } catch (erro) { /* ignora */ }
+  localStorage.removeItem(CHAVE_SESSAO);
   window.location.href = 'index.html';
 }
 
-/* Devolve o cliente logado ou null (visitante) */
 function clienteLogado() {
-  return lerJSON(CHAVE_SESSAO, null);
+  const sessao = lerJSON(CHAVE_SESSAO, null);
+  return sessao && sessao.tipo === 'cliente' && sessao.token ? sessao : null;
 }
 
-/* "Guarda" de página: telas como carrinho e meus pedidos
-   só abrem logado. Se for visitante, manda para o login
-   e guarda para onde ele queria ir (?voltar=...). */
 function exigirLogin() {
   const cliente = clienteLogado();
   if (!cliente) {

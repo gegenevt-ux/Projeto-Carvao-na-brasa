@@ -27,10 +27,16 @@ document.getElementById('beneficios').innerHTML = beneficios.map(b => `
 
 /* Cards: visitante vê "Ver produto"; logado já pode adicionar */
 const grade = document.getElementById('destaques');
-grade.innerHTML = PRODUTOS.slice(0, 3)
-  .map(p => criarCardProduto(p, cliente ? 'adicionar' : 'ver'))
-  .join('');
-ativarBotoesAdicionar(grade);
+carregarProdutos()
+  .then(() => {
+    grade.innerHTML = PRODUTOS.slice(0, 3)
+      .map(p => criarCardProduto(p, cliente ? 'adicionar' : 'ver'))
+      .join('');
+    ativarBotoesAdicionar(grade);
+  })
+  .catch(erro => {
+    grade.innerHTML = `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
+  });
 
 /* Quem já tem conta não precisa de "Criar conta" nem da chamada */
 if (cliente) {

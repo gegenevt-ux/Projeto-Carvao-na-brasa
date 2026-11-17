@@ -5,7 +5,7 @@
 const cliente = exigirLogin();
 montarLayout('pedidos');
 
-const pedidos = cliente ? meusPedidos(cliente.id) : [];
+const pedidos = [];
 
 /* Cada filtro é um nome + uma regra (função que diz sim/não) */
 const FILTROS = [
@@ -114,7 +114,15 @@ filtros.addEventListener('click', (e) => {
   const chip = e.target.closest('.chip');
   if (!chip) return;
   filtroAtual = chip.dataset.filtro;
-  desenhar();
+  Promise.all([carregarProdutos(), cliente ? meusPedidos() : Promise.resolve([])])
+    .then(([, pedidosDaAPI]) => {
+      pedidos.push(...pedidosDaAPI);
+      desenhar();
+    })
+    .catch(erro => {
+      document.getElementById('lista-pedidos').innerHTML =
+        `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
+    });
 });
 
 desenhar();
