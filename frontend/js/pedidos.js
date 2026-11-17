@@ -85,7 +85,7 @@ function resumoItens(pedido) {
 
 /* "03/11/2026 · 10:42" */
 function formatarDataHora(iso) {
-  const d = new Date(iso);
+  const d = new Date(String(iso).replace(' ', 'T') + 'Z');
   const data = d.toLocaleDateString('pt-BR');
   const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   return `${data} · ${hora}`;
