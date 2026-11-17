@@ -23,8 +23,8 @@ app.use (async(req, res, next) => {
         await db.pronto;
         next();
     } catch (err) {
-        console.error('Erro ao prepara o banco: ', err);
-        resq.status(500).json({erro: 'Banco de dados indisponivel. '});
+        console.error('Erro ao preparar o banco: ', err);
+        res.status(500).json({erro: 'Banco de dados indisponivel. '});
     }
 });
 
