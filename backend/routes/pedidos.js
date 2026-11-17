@@ -205,6 +205,7 @@ router.get('/:id', autenticar, async (req, res) => {
 // PATCH /pedidos/:id/status: comerciante muda o andamento
 router.patch('/:id/status', soComerciante, async (req, res) => {
   const { status } = req.body || {};
+    if(!status) return res.status(400).json({ erro: 'Informe o novo status. ' });
   try {
     const pedido = await umaLinha('SELECT id, status FROM pedido WHERE id = ?', [req.params.id]);
     if (!pedido) return res.status(404).json({ erro: 'Pedido não encontrado.' });
