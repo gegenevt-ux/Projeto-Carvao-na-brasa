@@ -3,6 +3,7 @@ const { createClient } = require('@libsql/client');
 const fs = require('fs');
 const path = require('path');
 const authRoutes = require('./routes/auth');
+const pedidosRoutes = require('./routes/pedidos');
 
 // Aqui nasce a nossa API. A linha de baixo ensina ela a entender
 // os dados que chegam em formato JSON (é assim que o site manda os pedidos).
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 
 app.use('/auth', authRoutes);
 app.use('/produtos', require('./routes/produtos'));
+app.use('/pedidos', pedidosRoutes);
 // A taxa de entrega fica guardada aqui, do nosso lado.
 // Se ela viesse do site, qualquer pessoa esperta poderia mudar o valor e pagar menos.
 // Também limitamos cada item a 20 pacotes, pra ninguém pedir 9999 sem querer.
