@@ -83,6 +83,9 @@ function cardPedido(pedido) {
 
       ${pedido.status === 'cancelado' ? '' : linhaDoTempo(pedido)}
       ${mensagemDoPedido(pedido)}
+      ${pedido.status === 'pendente'
+        ? `<button type="button" class="btn" data-cancelar="${pedido.id}">Cancelar pedido</button>`
+        : ''}
     </article>`;
 }
 
@@ -114,15 +117,34 @@ filtros.addEventListener('click', (e) => {
   const chip = e.target.closest('.chip');
   if (!chip) return;
   filtroAtual = chip.dataset.filtro;
-  Promise.all([carregarProdutos(), cliente ? meusPedidos() : Promise.resolve([])])
-    .then(([, pedidosDaAPI]) => {
-      pedidos.push(...pedidosDaAPI);
-      desenhar();
-    })
-    .catch(erro => {
-      document.getElementById('lista-pedidos').innerHTML =
-        `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
-    });
+  desenhar();
 });
 
-desenhar();
+// Botão "Cancelar pedido" (só aparece enquanto o pedido está pendente)
+document.getElementById('lista-pedidos').addEventListener('click', async (e) => {
+  const botao = e.target.closest('[data-cancelar]');
+  if (!botao) return;
+  if (!confirm('Quer mesmo cancelar este pedido?')) return;
+
+  botao.disabled = true;
+  try {
+    await requisicaoAPI(`/pedidos/${botao.dataset.cancelar}/cancelar`, { method: 'PATCH' });
+    const pedido = pedidos.find(p => p.id === Number(botao.dataset.cancelar));
+    if (pedido) pedido.status = 'cancelado';
+    desenhar();
+  } catch (erro) {
+    alert(erro.message);
+    botao.disabled = false;
+  }
+});
+
+// Busca os pedidos na API uma vez, quando a página abre
+Promise.all([carregarProdutos(), cliente ? meusPedidos() : Promise.resolve([])])
+  .then(([, pedidosDaAPI]) => {
+    pedidos.push(...pedidosDaAPI);
+    desenhar();
+  })
+  .catch(erro => {
+    document.getElementById('lista-pedidos').innerHTML =
+      `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
+  });
