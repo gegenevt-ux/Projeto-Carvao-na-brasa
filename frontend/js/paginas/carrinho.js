@@ -86,11 +86,10 @@ conteudo.addEventListener('click', (e) => {
     removerDoCarrinho(Number(remover));
     mostrarAviso(`${produto.nome} ${produto.peso} kg removido do carrinho.`);
   }
-  carregarProdutos()
-    .then(desenhar)
-    .catch(erro => {
-      conteudo.innerHTML = `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
-    });
+  desenhar();
 });
-
-desenhar();
+carregarProdutos()
+  .then(desenhar)
+  .catch(erro => {
+    conteudo.innerHTML = `<p class="alerta-erro" role="alert">${escaparHTML(erro.message)}</p>`;
+  });
