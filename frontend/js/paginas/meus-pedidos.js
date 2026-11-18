@@ -41,7 +41,8 @@ function linhaDoTempo(pedido) {
 
 function mensagemDoPedido(pedido) {
   if (pedido.status === 'cancelado') {
-    return `<p class="pedido-mensagem cancelado">${icone('xCirculo')} ${STATUS.cancelado.mensagem}</p>`;
+    const texto = Number(pedido.pago) ? 'Pedido cancelado. O valor pago no Pix será devolvido.' : STATUS.cancelado.mensagem;
+    return `<p class="pedido-mensagem cancelado">${icone('xCirculo')} ${texto}</p>`;
   }
   let texto = STATUS[pedido.status].mensagem;
   if (pedido.status === 'pronto') {
@@ -84,6 +85,9 @@ function cardPedido(pedido) {
 
       ${pedido.status === 'cancelado' ? '' : linhaDoTempo(pedido)}
       ${mensagemDoPedido(pedido)}
+      ${precisaPagarPix(pedido) ? `<p class="aviso-pix-pendente">Pix ainda não pago. <a href="pedido-enviado.html?id=${pedido.id}">Pagar agora</a></p>` : ''}
+      ${caixaCodigo(pedido)}
+      <a class="link-laranja link-comprovante" href="comprovante.html?id=${pedido.id}">Ver comprovante</a>
       ${pedido.status === 'pendente'
         ? `<button type="button" class="btn" data-cancelar="${pedido.id}">Cancelar pedido</button>`
         : ''}
