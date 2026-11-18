@@ -872,3 +872,7 @@
 /* --- Página 404 --- */
 .pagina-404 { max-width: 560px; padding-block: 24px 48px; }
 .pagina-404-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 16px; }
+
+/* Nome e CNPJ (ou CPF) de quem vende, no rodapé (Decreto 7.962/2013) */
+.rodape-empresa { margin-top: 4px; }
+.rodape-empresa[hidden] { display: none; }
