@@ -1,0 +1,33 @@
+/* Comprovante do pedido — largura de cupom, pensado para imprimir ou virar PDF */
+.pagina-comprovante { background: var(--fundo); min-height: 100vh; padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.comprovante-barra { max-width: 380px; margin: 0 auto 16px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.comprovante-barra .btn { min-height: 40px; padding: 0 14px; font-size: 14px; }
+.comprovante { max-width: 380px; margin: 0 auto; background: var(--branco); border: 1px solid var(--borda); padding: 24px 22px;
+  font-size: 13.5px; line-height: 1.45; color: var(--texto); font-variant-numeric: tabular-nums; }
+.cp-loja { text-align: center; padding-bottom: 14px; }
+.cp-loja h1 { font-size: 17px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; }
+.cp-loja p, .cp-bloco p { color: var(--texto-suave); }
+.cp-bloco { border-top: 1px dashed #B9B5AC; padding: 12px 0; }
+.cp-bloco h2 { font-size: 14px; font-weight: 700; color: var(--texto); }
+.cp-bloco p { margin-top: 2px; }
+.cp-linha { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; }
+.cp-linha span:last-child { white-space: nowrap; }
+.cp-total { font-weight: 800; font-size: 15px; margin-top: 6px; }
+.cp-rodape { border-top: 1px dashed #B9B5AC; padding-top: 12px; text-align: center; font-size: 12px; color: var(--texto-suave); }
+.comprovante-carregando { color: var(--texto-suave); }
+
+/* Na impressão (ou no "Salvar como PDF"), só o comprovante aparece */
+@media print {
+  @page { margin: 12mm; }
+  .pagina-comprovante { background: #fff; padding: 0; }
+  .comprovante-barra { display: none; }
+  .comprovante { border: 0; padding: 0; max-width: 80mm; }
+  .cp-loja p, .cp-bloco p, .cp-rodape { color: #333; }
+}
+
+/* Caixa de retirada (e aviso de cancelado) */
+.cp-aviso { border: 1.5px solid var(--texto); border-radius: 6px; padding: 10px 12px; margin: 4px 0 12px; }
+.cp-aviso h2 { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; margin-bottom: 2px; }
+.cp-aviso p { margin-top: 2px; }
+.cp-aviso-cancelado { font-weight: 700; text-align: center; }
