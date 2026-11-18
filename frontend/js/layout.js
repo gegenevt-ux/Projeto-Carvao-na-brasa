@@ -109,7 +109,14 @@ function montarLayout(paginaAtiva, opcoes = {}) {
   document.getElementById('cabecalho').outerHTML =
     opcoes.simples ? montarCabecalhoSimples() : montarCabecalho(paginaAtiva);
   document.getElementById('rodape').outerHTML = montarRodape(opcoes.rodapeCompleto);
-
+// Link "Pular para o conteúdo": é o primeiro item do Tab e leva direto ao <main>
+  const principal = document.querySelector('main');
+  if (principal) {
+    principal.id = principal.id || 'conteudo';
+    principal.setAttribute('tabindex', '-1');
+    document.body.insertAdjacentHTML('afterbegin',
+      `<a class="pular-conteudo" href="#${principal.id}">Pular para o conteúdo</a>`);
+  }
   atualizarBolinhaCarrinho();
 
   const botaoSair = document.querySelector('[data-sair]');
