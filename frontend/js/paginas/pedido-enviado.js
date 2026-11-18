@@ -21,8 +21,8 @@ buscarPedido(Number(parametroDaURL('id')))
     const entrega = pedido.recebimento === 'entrega';
     const onde = entrega
       ? `Levamos até <strong>${escaparHTML(pedido.endereco_entrega)}, ${escaparHTML(pedido.bairro)}</strong>.`
-      : `Retire na loja: <strong>${LOJA.endereco}</strong>, ${LOJA.horario.toLowerCase()}.`;
-
+      : `Retire na loja: <strong>${campoLoja('endereco')}</strong>. ${campoLoja('horario')}.`;
+     
     caixa.innerHTML = `
       <span class="confirmacao-icone">${icone('check')}</span>
       <h1>Pedido enviado!</h1>
@@ -35,7 +35,7 @@ buscarPedido(Number(parametroDaURL('id')))
         <ol>
           <li>A loja confirma o pedido, normalmente em até 30 minutos no horário de funcionamento.</li>
           <li>${onde}</li>
-          <li>Acompanhe cada etapa em <strong>Meus pedidos</strong>. Dúvidas: ${LOJA.telefone}.</li>
+         <li>Acompanhe cada etapa em <strong>Meus pedidos</strong>. Dúvidas: ${campoLoja('telefone')}.</li>
         </ol>
       </div>
 
