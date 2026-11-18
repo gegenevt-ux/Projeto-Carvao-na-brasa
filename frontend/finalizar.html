@@ -93,16 +93,17 @@
             <div class="grade-campos">
               <div class="campo">
                 <label for="nome">Nome</label>
-                <input class="input" id="nome" name="nome" autocomplete="name" required minlength="3">
+                <input class="input" id="nome" name="nome" autocomplete="name" readonly aria-describedby="ajuda-dados">
                 <span class="erro-campo" id="erro-nome"></span>
               </div>
               <div class="campo">
                 <label for="whatsapp">WhatsApp</label>
                 <input class="input" type="tel" id="whatsapp" name="whatsapp" inputmode="tel"
-                       autocomplete="tel" required data-mascara="telefone">
+                       autocomplete="tel" readonly aria-describedby="ajuda-dados">
                 <span class="erro-campo" id="erro-whatsapp"></span>
               </div>
             </div>
+            <p class="texto-apoio" id="ajuda-dados">Estes são os dados da sua conta. A loja usa este WhatsApp para falar sobre o pedido.</p>
 
             <!-- Some quando a pessoa escolhe "Retirada" -->
             <div class="separador" id="bloco-endereco">
@@ -140,8 +141,9 @@
             <div class="grade-campos">
               <div class="campo largo">
                 <label for="observacao">Observação (opcional)</label>
-                <textarea class="input" id="observacao" name="observacao" maxlength="300"
+                <textarea class="input" id="observacao" name="observacao" maxlength="200" aria-describedby="ajuda-observacao"
                           placeholder="Quer deixar alguma orientação sobre o pedido?"></textarea>
+                <small class="texto-apoio" id="ajuda-observacao">Até 200 caracteres.</small>
               </div>
             </div>
           </section>
