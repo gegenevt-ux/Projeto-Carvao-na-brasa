@@ -32,7 +32,7 @@ function montarCabecalho(paginaAtiva) {
   // Lado direito: visitante x logado
   const acoes = cliente
     ? `<details class="menu-usuario">
-         <summary>${icone('usuario')}<span class="menu-usuario-nome">${escaparHTML(cliente.nome)}</span>${icone('baixo', 'icone icone-seta')}</summary>
+         <summary aria-label="Conta de ${escaparHTML(cliente.nome)}">${icone('usuario')}<span class="menu-usuario-nome">${escaparHTML(cliente.nome)}</span>${icone('baixo', 'icone icone-seta')}</summary>
          <div class="menu-usuario-lista">
            <a href="meus-pedidos.html">Meus pedidos</a>
            <button type="button" data-sair>${icone('sair')} Sair</button>
