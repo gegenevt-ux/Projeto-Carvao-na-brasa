@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const db = require('../config/db');
 const { autenticar, soCliente, soComerciante } = require('../middlewares/auth');
 
@@ -19,6 +20,11 @@ const TRANSICOES = {
 const centavos = (v) => Math.round(v * 100) / 100;
 const consultar = async (sql, args = []) => (await db.execute({ sql, args })).rows;
 const umaLinha = async (sql, args = []) => (await consultar(sql, args))[0];
+
+// Código de 4 números que o cliente fala na hora de receber (ou retirar) o pedido
+const novoCodigo = () => String(crypto.randomInt(1000, 10000));
+// O Pedro não vê o código no painel: ele precisa ouvir do cliente
+const semCodigo = ({ codigo_entrega, ...pedido }) => pedido;
 
 // Fila: um pedido é gravado por vez
 let fila = Promise.resolve();
@@ -60,8 +66,19 @@ async function comItens(pedidos) {
 // POST /pedidos: cliente logado cria um pedido
 router.post('/', soCliente, async (req, res) => {
   const cliente_id = req.usuario.id; // vem do token, nunca do corpo
-  const { recebimento, endereco_entrega, bairro, observacao, itens } = req.body || {};
-
+  const { recebimento, endereco_entrega, bairro, observacao, itens, forma_pagamento, troco_para } = req.body || {};
+  
+  // Como o cliente vai pagar: Pix pelo site, ou dinheiro/cartão na entrega ou na retirada
+  if (!['pix', 'dinheiro', 'cartao'].includes(forma_pagamento)) {
+    return res.status(400).json({ erro: 'Escolha a forma de pagamento: pix, dinheiro ou cartão.' });
+  }
+  // Troco só faz sentido no dinheiro, e é opcional (vazio = não precisa de troco)
+  const troco = forma_pagamento === 'dinheiro' && troco_para !== undefined && troco_para !== null && troco_para !== ''
+    ? Number(troco_para) : null;
+  if (troco !== null && !(Number.isFinite(troco) && troco > 0)) {
+    return res.status(400).json({ erro: 'Informe um valor de troco válido.' });
+  }
+  
   if (!['entrega', 'retirada'].includes(recebimento)) {
     return res.status(400).json({ erro: 'O recebimento deve ser "entrega" ou "retirada".' });
   }
@@ -111,17 +128,24 @@ router.post('/', soCliente, async (req, res) => {
     const subtotal = centavos(itensComPreco.reduce((s, i) => s + i.preco_unitario * i.quantidade, 0));
     const taxa = entrega ? TAXA_ENTREGA : 0;
     const total = centavos(subtotal + taxa);
+    
+    if (troco !== null && troco < total) {
+      return res.status(400).json({ erro: `O troco precisa ser para um valor maior ou igual ao total (R$ ${total.toFixed(2).replace('.', ',')}).` });
+    }
 
     const pedidoId = await emTransacao(async (tx) => {
       const pedido = await tx.execute({
-        sql: `INSERT INTO pedido (cliente_id, recebimento, endereco_entrega, bairro, taxa_entrega, observacao, total, status)
-              VALUES (?, ?, ?, ?, ?, ?, ?, 'pendente')`,
+       sql: `INSERT INTO pedido (cliente_id, recebimento, endereco_entrega, bairro, taxa_entrega, observacao, forma_pagamento, troco_para, codigo_entrega, total, status)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente')`,
         args: [
           cliente_id, recebimento,
           entrega ? endereco_entrega.trim() : null,
           entrega ? bairro.trim() : null,
           taxa,
           String(observacao || '').trim().slice(0, 200) || null,
+          forma_pagamento,
+          troco !== null ? centavos(troco) : null,
+          novoCodigo(),
           total,
         ],
       });
@@ -176,7 +200,7 @@ router.get('/', soComerciante, async (req, res) => {
       args.push(status);
     }
     sql += ' ORDER BY p.data DESC, p.id DESC';
-    res.json(await comItens(await consultar(sql, args)));
+    res.json(await comItens(await consultar(sql, args))).map(semCodigo));
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Não foi possível buscar os pedidos.' });
@@ -195,7 +219,8 @@ router.get('/:id', autenticar, async (req, res) => {
     if (!pedido || (req.usuario.tipo === 'cliente' && !dono)) {
       return res.status(404).json({ erro: 'Pedido não encontrado.' });
     }
-    res.json((await comItens([pedido]))[0]);
+    const completo = (await comItens([pedido]))[0];
+    res.json(req.usuario.tipo === 'comerciante' ? semCodigo(completo) : completo);
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Não foi possível buscar o pedido.' });
@@ -204,10 +229,10 @@ router.get('/:id', autenticar, async (req, res) => {
 
 // PATCH /pedidos/:id/status: comerciante muda o andamento
 router.patch('/:id/status', soComerciante, async (req, res) => {
-  const { status } = req.body || {};
+  const { status, codigo } = req.body || {};
     if(!status) return res.status(400).json({ erro: 'Informe o novo status. ' });
   try {
-    const pedido = await umaLinha('SELECT id, status FROM pedido WHERE id = ?', [req.params.id]);
+    const pedido = await umaLinha('SELECT id, status, codigo_entrega FROM pedido WHERE id = ?', [req.params.id]);
     if (!pedido) return res.status(404).json({ erro: 'Pedido não encontrado.' });
 
     if (!(TRANSICOES[pedido.status] || []).includes(status)) {
@@ -215,6 +240,12 @@ router.patch('/:id/status', soComerciante, async (req, res) => {
         erro: `Não é possível mudar de "${pedido.status}" para "${status}".`,
       });
     }
+    
+   // Para concluir, o Pedro digita o código que o cliente falou (pedidos antigos não têm código)
+    if (status === 'concluido' && pedido.codigo_entrega && String(codigo || '').trim() !== pedido.codigo_entrega) {
+      return res.status(400).json({ erro: 'Código de entrega não confere. Peça o código de 4 números ao cliente.' });
+    }
+    
     await db.execute({ sql: 'UPDATE pedido SET status = ? WHERE id = ?', args: [status, pedido.id] });
     res.json({ mensagem: 'Status atualizado!', status });
   } catch (err) {
@@ -238,6 +269,25 @@ router.patch('/:id/cancelar', soCliente, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Não foi possível cancelar o pedido.' });
+  }
+});
+
+// PATCH /pedidos/:id/pagar: DEMONSTRAÇÃO do Pix pelo site.
+// Nenhum dinheiro de verdade passa por aqui: o botão "Já paguei" só marca o pedido como pago.
+router.patch('/:id/pagar', soCliente, async (req, res) => {
+  try {
+    const resultado = await db.execute({
+      sql: `UPDATE pedido SET pago = 1
+            WHERE id = ? AND cliente_id = ? AND forma_pagamento = 'pix' AND status != 'cancelado'`,
+      args: [req.params.id, req.usuario.id],
+    });
+    if (resultado.rowsAffected === 0) {
+      return res.status(400).json({ erro: 'Este pedido não pode ser pago pelo site.' });
+    }
+    res.json({ mensagem: 'Pagamento registrado (demonstração).' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Não foi possível registrar o pagamento.' });
   }
 });
 
