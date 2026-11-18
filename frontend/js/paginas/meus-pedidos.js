@@ -60,7 +60,7 @@ function cardPedido(pedido) {
     ? `<span class="rotulo-detalhe">${icone('caminhao')} Entrega</span>
        <p class="suave">${escaparHTML(pedido.endereco_entrega)} · ${escaparHTML(pedido.bairro)} · Porto Velho/RO</p>`
     : `<span class="rotulo-detalhe">${icone('loja')} Retirada na loja</span>
-       <p class="suave">${LOJA.endereco}</p>`;
+       <p class="suave">${campoLoja('endereco')}</p>`;
 
   return `
     <article class="painel painel-corpo">
