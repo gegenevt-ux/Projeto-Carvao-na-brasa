@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS "comerciante" (
 	"endereco"	TEXT,
 	"telefone"	TEXT,
 	"horario"	TEXT,
+	"razao_social"	TEXT,
+	"documento"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "item_pedido" (
