@@ -117,3 +117,44 @@ function mostrarAviso(mensagem, link) {
   clearTimeout(aviso.timer);
   aviso.timer = setTimeout(() => aviso.classList.remove('visivel'), 3500);
 }
+/* --- Caixa de confirmação (no lugar do confirm() do navegador) ---
+   Serve para qualquer tela. Devolve true se a pessoa confirmou.
+   - linhas: lista opcional de [rótulo, valor], como um recibo
+   - total:  valor opcional mostrado em negrito no fim
+   - perigo: true deixa o botão vermelho (excluir, cancelar) */
+function confirmar({ titulo, texto = '', linhas = [], total = null,
+                     botaoConfirmar = 'Confirmar', botaoVoltar = 'Voltar', perigo = false }) {
+  return new Promise(resolver => {
+    const caixa = document.createElement('dialog');
+    caixa.className = 'caixa-confirmar';
+    caixa.setAttribute('aria-labelledby', 'caixa-confirmar-titulo');
+    if (texto) caixa.setAttribute('aria-describedby', 'caixa-confirmar-texto');
+
+    const linha = ([rotulo, valor], extra = '') =>
+      `<div class="caixa-confirmar-linha ${extra}"><span>${escaparHTML(String(rotulo))}</span><span>${escaparHTML(String(valor))}</span></div>`;
+
+    caixa.innerHTML = `
+      <div class="caixa-confirmar-topo">
+        <h2 id="caixa-confirmar-titulo">${escaparHTML(titulo)}</h2>
+        <button type="button" class="caixa-confirmar-fechar" value="nao" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      ${texto || linhas.length || total ? `<div class="caixa-confirmar-corpo">
+        ${texto ? `<p id="caixa-confirmar-texto">${escaparHTML(texto)}</p>` : ''}
+        ${linhas.map(l => linha(l)).join('')}
+        ${total ? linha(['Total', total], 'caixa-confirmar-total') : ''}
+      </div>` : ''}
+      <div class="caixa-confirmar-rodape">
+        <button type="button" class="btn btn-contorno" value="nao" autofocus>${escaparHTML(botaoVoltar)}</button>
+        <button type="button" class="btn ${perigo ? 'btn-perigo' : ''}" value="sim">${escaparHTML(botaoConfirmar)}</button>
+      </div>`;
+
+    const fechar = (resposta) => { caixa.close(); caixa.remove(); resolver(resposta); };
+    caixa.addEventListener('click', e => {
+      if (e.target === caixa) return fechar(false);           // clique no fundo escuro
+      const b = e.target.closest('button'); if (b) fechar(b.value === 'sim');
+    });
+    caixa.addEventListener('cancel', e => { e.preventDefault(); fechar(false); });   // tecla Esc
+    document.body.appendChild(caixa);
+    caixa.showModal();
+  });
+}
