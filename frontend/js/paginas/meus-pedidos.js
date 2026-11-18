@@ -124,7 +124,24 @@ filtros.addEventListener('click', (e) => {
 document.getElementById('lista-pedidos').addEventListener('click', async (e) => {
   const botao = e.target.closest('[data-cancelar]');
   if (!botao) return;
-  if (!confirm('Quer mesmo cancelar este pedido?')) return;
+  
+   const pedidoAlvo = pedidos.find(p => p.id === Number(botao.dataset.cancelar));
+  const confirmou = await confirmar({
+    titulo: `Cancelar pedido #${pedidoAlvo.id}`,
+    texto: 'O pedido não será preparado pela loja e não poderá ser reaberto.',
+    linhas: [
+      ...pedidoAlvo.itens.map(item => {
+        const produto = buscarProduto(item.produtoId);
+        const nome = produto ? `${produto.nome} ${produto.peso} kg` : (item.nome || 'Produto');
+        return [`${item.quantidade} × ${nome}`, formatarPreco(item.preco * item.quantidade)];
+      }),
+      ...(pedidoAlvo.taxa_entrega ? [['Taxa de entrega', formatarPreco(pedidoAlvo.taxa_entrega)]] : [])
+    ],
+    total: formatarPreco(totalPedido(pedidoAlvo)),
+    botaoConfirmar: 'Cancelar pedido',
+    perigo: true
+  });
+  if (!confirmou) return;
 
   botao.disabled = true;
   try {
