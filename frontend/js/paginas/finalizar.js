@@ -39,8 +39,8 @@ async function iniciarFinalizacao() {
     document.getElementById('info-recebimento').innerHTML = entrega
       ? `<strong>Entrega em Porto Velho</strong>
          Levamos até você por ${formatarPreco(LOJA.taxaEntrega)}. Preencha o endereço abaixo.`
-      : `<strong>Retirada no ${LOJA.nome}</strong>
-         ${LOJA.endereco}<br>${LOJA.horario}`;
+     : `<strong>Retirada no ${campoLoja('nome')}</strong>
+         ${campoLoja('endereco')}<br>${campoLoja('horario')}`;
 
     const linhaTaxa = document.getElementById('linha-taxa');
     linhaTaxa.classList.toggle('gratis', !entrega);
