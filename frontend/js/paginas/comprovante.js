@@ -46,6 +46,7 @@ Promise.all([
       <h1>${escaparHTML(nomeLoja)}</h1>
       <p>${escaparHTML(endereco)}</p>
       <p>WhatsApp ${escaparHTML(telefone)}</p>
+      ${loja.documento ? `<p>${escaparHTML(loja.razao_social || nomeLoja)} · ${loja.documento.replace(/\D/g, '').length === 11 ? 'CPF' : 'CNPJ'} ${escaparHTML(loja.documento)}</p>` : ''}
     </header>
 
     <section class="cp-bloco">
