@@ -10,8 +10,8 @@
 /* 1. TOKENS — valores tirados do protótipo do Figma */
 :root {
   /* Marca */
-  --laranja: #D84D12;
-  --laranja-escuro: #B93F0C;   /* hover */
+  --laranja: #B93F0C;
+  --laranja-escuro: #9A3409;   /* hover */
   --laranja-suave: #FDEFE4;    /* fundo dos ícones e do card selecionado */
   --carvao: #1A1C19;           /* hero, rodapé, botão escuro */
 
@@ -21,11 +21,11 @@
   --cinza-claro: #ECEBE6;      /* botão desativado, cabeçalho de tabela */
   --borda: #E6E4DE;
   --texto: #1A1C19;
-  --texto-suave: #6E6B64;
+  --texto-suave: #625F58;
   --texto-no-escuro: #C9C6BE;
 
   /* Status */
-  --verde: #2E7D46;
+  --verde: #276B3C;
   --verde-fundo: #E8F3EA;
   --vermelho: #C2361B;
   --vermelho-fundo: #FDECEA;
