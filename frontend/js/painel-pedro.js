@@ -361,6 +361,9 @@
     const d = Object.fromEntries(keys.map(k => [k, $('#store-' + k).value]));
     $('#preview-address').textContent = `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`;
     $('#preview-phone').textContent = d.phone; $('#preview-hours').textContent = d.hours;
+    const doc = $('#store-doc').value.trim(), nums = doc.replace(/\D/g, '');
+    $('#preview-legal').textContent = doc ? `${$('#store-legal').value.trim() || d.name} · ${nums.length === 11 ? 'CPF' : 'CNPJ'} ${doc}` : '';
+    $('#preview-legal-row').hidden = !doc;
   }
   // O banco guarda o endereço numa linha só: "Rua, número · bairro · cidade"
   const separarEndereco = (e = '') => {
@@ -368,10 +371,11 @@
     return m ? { street: m[1], number: m[2], neighborhood: m[3], city: m[4] } : { street: e, number: '', neighborhood: '', city: '' };
   };
   if (page === 'comercio') {
-    keys.forEach(k => $('#store-' + k).addEventListener('input', renderPreview));
+    [...keys, 'legal', 'doc'].forEach(k => $('#store-' + k).addEventListener('input', renderPreview));
     carregarLoja().then(l => {
       const v = { name: l.nome_comercio || '', phone: l.telefone || '', hours: l.horario || '', ...separarEndereco(l.endereco || '') };
       keys.forEach(k => { $('#store-' + k).value = v[k] || ''; });
+       $('#store-legal').value = l.razao_social || ''; $('#store-doc').value = l.documento || '';
       renderPreview();
     });
     $('#store-form').addEventListener('submit', async e => {
@@ -381,8 +385,10 @@
       try {
         await api('/comercio', { method: 'PUT', body: JSON.stringify({
           nome_comercio: d.name, telefone: d.phone, horario: d.hours,
-          endereco: `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`
+          endereco: `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`,
+          razao_social: $('#store-legal').value.trim(), documento: $('#store-doc').value.trim()
         }) });
+      const salvo = await carregarLoja(); $('#store-doc').value = salvo.documento || '';   // volta já formatado
         renderPreview(); toast('Dados do comércio salvos.');
       } catch (erro) { toast(erro.message); }
     });
