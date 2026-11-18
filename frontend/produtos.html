@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos | Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/painel-pedro.css">
+</head>
+<body class="pp-body" data-page="produtos">
+<div class="pp-shell">
+  <aside class="pp-sidebar" id="pp-sidebar"></aside>
+  <div class="pp-main">
+    <header class="pp-topbar" id="pp-topbar"></header>
+    <main class="pp-page">
+      <div class="pp-page-head"><div>
+        <h1 class="pp-title">Produtos</h1>
+        <p class="pp-subtitle">Gerencie o catálogo, os preços e a disponibilidade para pedidos.</p>
+      </div></div>
+
+      <section class="pp-products-layout">
+        <div>
+          <div class="pp-field"><label for="product-search">Buscar no catálogo</label>
+            <div class="pp-search"><input class="pp-input" id="product-search" type="search" placeholder="Nome do produto"><span data-icon="search"></span></div>
+          </div>
+          <div class="pp-count" id="product-count">3 produtos</div>
+          <div class="pp-card pp-ptable">
+            <div class="pp-prow head"><span>PRODUTO</span><span>CATEGORIA</span><span>PESO</span><span>PREÇO</span><span>SITUAÇÃO</span><span>AÇÕES</span></div>
+            <div id="product-table"></div>
+          </div>
+          <div class="pp-info"><span data-icon="info"></span>Produtos indisponíveis continuam no catálogo, mas não podem ser adicionados ao carrinho.</div>
+        </div>
+
+        <aside class="pp-card pp-form-card" id="product-card">
+          <h2 id="product-form-title">Novo produto</h2>
+          <p class="sub" id="product-form-sub">Cadastre um novo pacote no catálogo da loja.</p>
+          <form id="product-form" novalidate>
+            <input type="hidden" id="product-id">
+            <div class="pp-fgrid">
+              <div class="pp-field wide"><label for="product-name">Nome</label><input class="pp-input" id="product-name" placeholder="Ex.: Carvão vegetal"></div>
+              <div class="pp-field wide"><label for="product-description">Descrição</label><textarea class="pp-textarea" id="product-description" placeholder="Conte um pouco sobre o produto"></textarea></div>
+              <div class="pp-field"><label for="product-price">Preço (R$)</label><input class="pp-input" id="product-price" inputmode="decimal" placeholder="0,00"></div>
+              <div class="pp-field"><label for="product-weight">Peso (kg)</label><input class="pp-input" id="product-weight" inputmode="decimal" placeholder="Ex.: 5"></div>
+              <div class="pp-field wide"><label for="product-category">Categoria</label>
+                <select class="pp-select" id="product-category"><option value="">Selecione uma categoria</option><option>Tradicional</option><option>Premium</option><option>Misto</option></select></div>
+              <div class="pp-field wide"><span class="pp-label">Foto</span>
+                <label class="pp-upload" id="photo-empty" for="product-photo"><span data-icon="imageplus"></span><b>Clique para enviar uma foto</b><small>JPG ou PNG · até 5 MB</small></label>
+                <div class="pp-photo" id="photo-filled"><img id="photo-img" alt=""><div><b id="photo-name"></b><label for="product-photo">Alterar foto</label></div></div>
+                <input type="file" id="product-photo" accept="image/png,image/jpeg">
+              </div>
+              <label class="pp-check wide"><input type="checkbox" id="product-active" checked><span class="box"><span data-icon="check"></span></span><span><strong>Disponível para pedidos</strong><small>Desmarque para pausar as vendas deste item.</small></span></label>
+            </div>
+            <div class="pp-form-actions">
+              <button class="pp-btn block" type="submit" id="product-submit"></button>
+              <button class="pp-btn secondary block" type="button" id="product-reset" hidden>Cancelar edição</button>
+            </div>
+          </form>
+        </aside>
+      </section>
+    </main>
+    <footer class="pp-footer" id="pp-footer"></footer>
+  </div>
+</div>
+<div class="pp-modal-backdrop" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+  <div class="pp-modal">
+    <div class="pp-modal-top"><span class="pp-modal-icon" data-icon="trash"></span><button class="pp-modal-x" type="button" data-close-modal aria-label="Fechar" data-icon="x"></button></div>
+    <h2 id="product-modal-title">Excluir este produto?</h2>
+    <p>O produto será removido do catálogo. Esta ação não pode ser desfeita. Pedidos anteriores serão mantidos.</p>
+    <div class="pp-modal-item"><img id="delete-img" alt=""><div><strong id="delete-title"></strong><small id="delete-sub"></small></div></div>
+    <div class="pp-modal-actions"><button class="pp-btn secondary" type="button" data-close-modal>Cancelar</button><button class="pp-btn danger" type="button" id="confirm-delete-product">Excluir produto</button></div>
+  </div>
+</div>
+<div class="pp-toast" role="status" aria-live="polite"></div>
+<script src="js/painel-pedro.js"></script>
+</body>
+</html>
