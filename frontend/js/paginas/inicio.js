@@ -17,7 +17,7 @@ document.getElementById('btn-cta').insertAdjacentHTML('afterbegin', icone('seta'
 const beneficios = [
   { icone: 'chama',    titulo: 'Brasa duradoura',        texto: 'Mais tempo de brasa, mais tempo junto.' },
   { icone: 'escudo',   titulo: 'Carvão selecionado',     texto: 'Qualidade que começa no pacote.' },
-  { icone: 'caminhao', titulo: 'Entrega em Porto Velho', texto: 'Receba em casa ou retire na loja.' }
+  { icone: 'caminhao', titulo: 'Entrega em Porto Velho', texto: 'Receba em casa ou busque na loja.' }
 ];
 document.getElementById('beneficios').innerHTML = beneficios.map(b => `
   <li class="beneficio">
