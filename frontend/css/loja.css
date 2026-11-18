@@ -796,3 +796,21 @@
 .historico > summary .suave { font-weight: 400; }
 .historico .lista-pedidos { margin-top: 12px; }
 @media (prefers-reduced-motion: reduce) { .historico > summary::before { transition: none; } }
+
+/* --- Páginas de texto (Privacidade, Trocas) --- */
+.texto-legal { max-width: 720px; }
+.texto-legal h2 { font-size: 19px; margin: 32px 0 8px; }
+.texto-legal p, .texto-legal li { font-size: 16px; line-height: 1.65; color: var(--texto); }
+.texto-legal p + p { margin-top: 10px; }
+.texto-legal ul { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 6px; list-style: disc; }
+.texto-legal ul + p { margin-top: 14px; }
+.texto-legal a { color: var(--laranja); text-decoration: underline; text-underline-offset: 2px; }
+.texto-legal .subtitulo-pagina { margin-bottom: 20px; }
+
+/* Links do rodapé e aviso do cadastro */
+.rodape-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 6px; }
+.rodape-links a { color: var(--branco); text-decoration: underline; text-underline-offset: 2px; font-size: 13px; }
+.rodape-links a:hover { color: #F2B48C; }
+@media (min-width: 900px) { .rodape-links { justify-content: flex-end; } }
+.aviso-consentimento { font-size: 13px; color: var(--texto-suave); margin: 4px 0 12px; }
+.aviso-consentimento a { color: var(--laranja); font-weight: 600; text-decoration: underline; }
