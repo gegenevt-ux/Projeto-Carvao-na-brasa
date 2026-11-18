@@ -80,8 +80,8 @@ function montarRodape(completo = false) {
       <div class="container rodape-conteudo">
         ${topo}
         <address>
-          ${LOJA.endereco}<br>
-          <span>${LOJA.telefone} · ${LOJA.horario}</span>
+          ${campoLoja('endereco')}<br>
+           <span>${campoLoja('telefone')} · ${campoLoja('horario')}</span>
         </address>
        <div class="rodape-nota">
           <nav class="rodape-links" aria-label="Informações">
