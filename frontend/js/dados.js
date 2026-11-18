@@ -71,4 +71,3 @@ const lojaCarregada = new Promise(pronto => document.addEventListener('DOMConten
     return LOJA;
   })
   .catch(() => LOJA);   // se a API falhar, fica com a reserva
-};
