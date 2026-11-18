@@ -292,7 +292,7 @@
         <div class="pp-order-body">
           <div><span class="pp-order-label">Cliente</span><strong class="cname">${esc(o.customer)}</strong><p>${icon('phone')}${esc(o.phone)}</p></div>
           <div><span class="pp-order-label">Itens do pedido</span><strong>${esc(o.items)}</strong><p>Subtotal ${money(o.subtotal)}${o.note ? ` · Obs.: ${esc(o.note)}` : ''}</p></div>
-          <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}</p><p><a class="pp-link-comprovante" href="comprovante.html?id=${0.id}">Imprimir comprovante</a></p>${o.payment ? `<p>Pagamento: ${esc(o.payment)}${o.change ? ` · ${esc(o.change)}` : ''}</p>` : ''}</div>
+          <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}</p><p><a class="pp-link-comprovante" href="comprovante.html?id=${o.id}">Imprimir comprovante</a></p>${o.payment ? `<p>Pagamento: ${esc(o.payment)}${o.change ? ` · ${esc(o.change)}` : ''}</p>` : ''}</div>
           <div class="pp-order-total"><span class="pp-order-label" style="justify-content:flex-end">Total</span><div class="v">${money(o.total)}</div></div>
         </div>
         <div class="pp-order-foot${acts ? '' : ' noact'}"><span class="${cls}">${icon(ic)}${txt}</span>${acts}</div>
@@ -335,7 +335,7 @@
         closeModal($('#code-modal')); pendingCodeId = null;
         await carregarPedidos(); renderOrders(); toast(`Pedido #${o.id} concluído.`);
       } catch (erro) { $('#code-error').textContent = erro.message; $('#code-input').select(); }
-     
+     });
     $('#confirm-cancel-order').addEventListener('click', () => {
       const o = orders.find(x => x.id === pendingCancelId); if (!o) return;
       closeModal($('#cancel-modal')); pendingCancelId = null;
