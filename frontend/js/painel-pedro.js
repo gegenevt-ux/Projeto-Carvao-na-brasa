@@ -1,20 +1,32 @@
 /* Painel do Pedro — telas do comerciante (seguem o protótipo do Figma).
-   Os registros são demonstrativos e ficam no localStorage; trocar pela API do projeto depois. */
+   Os pedidos, produtos e dados da loja vêm da API do projeto (mesmo banco do site). */
 (() => {
   'use strict';
 
   /* ---------- Guarda: só o comerciante entra (usa a sessão da loja) ---------- */
   const sessao = (() => { try { return JSON.parse(localStorage.getItem('carvao_sessao')); } catch { return null; } })();
-  if (!sessao) { location.replace('login.html?voltar=' + location.pathname.split('/').pop()); return; }
+  if (!sessao || !sessao.token) { location.replace('login.html'); return; }
   if (sessao.tipo !== 'comerciante') { location.replace('index.html'); return; }
+
+  /* ---------- Conversa com a API (o token do login vai junto em todo pedido) ---------- */
+  const API = 'https://carvao-na-brasa-api.vercel.app';
+  async function api(caminho, opcoes = {}) {
+    const resposta = await fetch(API + caminho, {
+      ...opcoes,
+      headers: { Accept: 'application/json', ...(opcoes.body ? { 'Content-Type': 'application/json' } : {}), Authorization: `Bearer ${sessao.token}` }
+    });
+    const dados = await resposta.json().catch(() => null);
+    // Login vencido (dura 2 horas): limpa a sessão e volta para o login
+    if (resposta.status === 401) { try { localStorage.removeItem('carvao_sessao'); } catch {} location.replace('login.html'); throw new Error('Faça login de novo.'); }
+    if (!resposta.ok) throw new Error(dados?.erro || `Erro na API (${resposta.status}).`);
+    return dados;
+  }
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const page = document.body.dataset.page;
   const money = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const read = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch { return fb; } };
-  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
   /* ---------- Ícones (traço fino, como no protótipo) ---------- */
   const P = {
@@ -66,11 +78,11 @@
     <span class="pp-sidebar-label">ÁREA DO PEDRO</span>
     <nav class="pp-nav">${nav.map(([id, t, href, ic]) => `<a href="${href}"${id === page ? ' aria-current="page"' : ''}>${icon(ic)}${t}</a>`).join('')}</nav>
     <div class="pp-side-note">${icon('flame')}<strong>Sua loja, no seu ritmo.</strong><p>Produtos e pedidos organizados em um só lugar.</p></div>
-    <div class="pp-user"><span class="pp-avatar">P</span><span><strong>Pedro</strong><small>Administrador</small></span><button class="pp-logout" type="button" id="pp-logout" title="Sair do painel" aria-label="Sair do painel">${icon('logout')}</button></div>`;
+    <div class="pp-user"><span class="pp-avatar">${esc((sessao.nome || 'P').charAt(0).toUpperCase())}</span><span><strong>${esc(sessao.nome || 'Pedro')}</strong><small>Administrador</small></span><button class="pp-logout" type="button" id="pp-logout" title="Sair do painel" aria-label="Sair do painel">${icon('logout')}</button></div>`;
   $('#pp-topbar').innerHTML = `
     <div class="pp-topbar-crumb"><button class="pp-mobile-menu" type="button" aria-label="Abrir menu" data-menu-toggle>${icon('menu')}</button>Carvão do Pedro / ${crumb}</div>
     <div class="pp-topbar-actions"><a href="index.html" target="_blank" rel="noopener">${icon('external')}Ver loja</a><span title="Notificações">${icon('bell')}</span></div>`;
-  $('#pp-footer').innerHTML = '<span>Carvão do Pedro · Gestão do comércio</span><span>Dados demonstrativos</span>';
+  $('#pp-footer').innerHTML = '<span>Carvão do Pedro · Gestão do comércio</span>';
   paintIcons();
 
   $('#pp-logout').addEventListener('click', () => { try { localStorage.removeItem('carvao_sessao'); } catch {} location.href = 'index.html'; });
@@ -94,38 +106,54 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') $$('.pp-modal-backdrop.open').forEach(closeModal); });
 
-  /* ---------- Dados de demonstração (iguais ao protótipo) ---------- */
+  /* ---------- Dados da API → formato que as telas usam ---------- */
   const slug = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const IMG = { 3: 'assets/img/produto-tradicional-3kg.jpg', 5: 'assets/img/produto-tradicional-5kg.jpg', 10: 'assets/img/produto-premium-10kg.jpeg' };
   const imgDe = p => p.image || IMG[p.weight] || IMG[5];
-  const initialProducts = [
-    { id: 1, name: 'Carvão vegetal', weight: 3, price: 18, category: 'Tradicional', description: 'Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.', active: true, image: IMG[3] },
-    { id: 2, name: 'Carvão vegetal', weight: 5, price: 28, category: 'Tradicional', description: 'O tamanho certo para reunir a turma ao redor da churrasqueira. Carvão selecionado em pedaços, com brasa duradoura para você aproveitar cada momento.', active: true, image: IMG[5] },
-    { id: 3, name: 'Carvão vegetal premium', weight: 10, price: 52, category: 'Premium', description: 'Um pacote maior para churrascos que pedem mais tempo de brasa. Carvão selecionado em pedaços grandes, pensado para encontros com a turma toda.', active: false, image: IMG[10] }
-  ];
-  const ITENS_5_3 = '2 × Carvão vegetal 5 kg · 1 × Carvão vegetal 3 kg';
-  const initialOrders = [
-    { id: 1048, customer: 'João da Silva', phone: '(69) 99999-1234', items: ITENS_5_3, subtotal: 74, fee: 8, total: 82, address: 'Rua dos Ipês, 245 · Aponiã · Porto Velho/RO', type: 'Entrega', status: 'pending', date: '2026-11-03', time: '10:42' },
-    { id: 1047, customer: 'João da Silva', phone: '(69) 99999-1234', items: ITENS_5_3, subtotal: 74, fee: 0, total: 74, address: 'Rua das Castanheiras, 120 · Centro · Porto Velho/RO', type: 'Retirada', status: 'ready', date: '2026-11-03', time: '09:20' },
-    { id: 1046, customer: 'João da Silva', phone: '(69) 99999-1234', items: '2 × Carvão vegetal 3 kg', subtotal: 36, fee: 8, total: 44, address: 'Rua dos Ipês, 245 · Aponiã · Porto Velho/RO', type: 'Entrega', status: 'preparing', date: '2026-11-03', time: '08:55' },
-    { id: 1045, customer: 'João da Silva', phone: '(69) 99999-1234', items: '1 × Carvão vegetal 5 kg', subtotal: 28, fee: 8, total: 36, address: 'Rua dos Ipês, 245 · Aponiã · Porto Velho/RO', type: 'Entrega', status: 'done', date: '2026-11-02', time: '14:30' },
-    { id: 1044, customer: 'João da Silva', phone: '(69) 99999-1234', items: '1 × Carvão vegetal 3 kg', subtotal: 18, fee: 8, total: 26, address: 'Rua dos Ipês, 245 · Aponiã · Porto Velho/RO', type: 'Entrega', status: 'cancelled', date: '2026-10-30', time: '11:10' }
-  ];
-  // chaves "-v2": o formato mudou em relação à primeira versão do painel
-  let products = read('pp-products-v2', initialProducts);
-  let orders = read('pp-orders-v2', initialOrders);
+  const kg = v => String(Number(v) || 0).replace('.', ',');
+
+  const deProduto = p => ({
+    id: Number(p.id), name: p.nome, weight: Number(p.peso) || 0, price: Number(p.preco) || 0,
+    category: p.categoria || '', description: p.descricao || '', active: Number(p.disponivel) === 1, image: p.imagem || ''
+  });
+
+  // O banco usa os status em português; as telas, as chaves abaixo
+  const DA_API = { pendente: 'pending', preparando: 'preparing', pronto: 'ready', concluido: 'done', cancelado: 'cancelled' };
+  const PARA_API = Object.fromEntries(Object.entries(DA_API).map(([pt, en]) => [en, pt]));
+  // O banco guarda a hora em UTC ("2026-11-17 14:26:13"); aqui vira a hora de Porto Velho
+  const quando = s => new Date(String(s).replace(' ', 'T') + 'Z');
+  const diaLocal = d => d.toLocaleDateString('sv-SE');   // AAAA-MM-DD no fuso do computador
+
+  let enderecoLoja = '';
+  const dePedido = o => {
+    const d = quando(o.data), entrega = o.recebimento === 'entrega';
+    const itens = o.itens || [];
+    return {
+      id: Number(o.id), customer: o.cliente_nome || 'Cliente', phone: o.cliente_whatsapp || '',
+      items: itens.map(i => `${i.quantidade} × ${i.nome} ${kg(i.peso)} kg`).join(' · '),
+      subtotal: itens.reduce((t, i) => t + Number(i.preco_unitario) * Number(i.quantidade), 0),
+      fee: Number(o.taxa_entrega) || 0, total: Number(o.total) || 0,
+      address: entrega ? [o.endereco_entrega, o.bairro].filter(Boolean).join(' · ') : (enderecoLoja || 'Na loja'),
+      note: o.observacao || '', type: entrega ? 'Entrega' : 'Retirada', status: DA_API[o.status] || o.status,
+      date: diaLocal(d), time: d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
+  let products = [], orders = [];
+  const carregarProdutos = async () => { products = (await api('/produtos')).map(deProduto); };
+  const carregarPedidos = async () => { orders = (await api('/pedidos')).map(dePedido); };
+  const carregarLoja = async () => { try { return await api('/comercio'); } catch { return {}; } };
 
   const STATUS = { pending: 'Pendente', preparing: 'Preparando', ready: 'Pronto', done: 'Concluído', cancelled: 'Cancelado' };
   const badge = s => `<span class="pp-status ${s}">${STATUS[s] || s}</span>`;
   const dataBR = d => d.split('-').reverse().join('/');
+  const hoje = () => diaLocal(new Date());
 
   /* ---------- PAINEL ---------- */
   function renderDashboard() {
     if (page !== 'painel') return;
     $('#today-label').textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
-    // "hoje" da demonstração = dia do pedido mais recente
-    const latest = orders.reduce((m, o) => (o.date > m ? o.date : m), '');
-    const day = orders.filter(o => o.date === latest);
+    const day = orders.filter(o => o.date === hoje());
     const pend = day.filter(o => o.status === 'pending').length;
     const andamento = day.filter(o => ['preparing', 'ready'].includes(o.status)).length;
     $('#stat-orders').textContent = day.length;
@@ -133,9 +161,10 @@
     const ativos = products.filter(p => p.active).length, indisp = products.length - ativos;
     $('#stat-products').textContent = ativos;
     $('#stat-products-foot').textContent = `${products.length} cadastrados · ${indisp} ${indisp === 1 ? 'indisponível' : 'indisponíveis'}`;
-    $('#stat-sales').textContent = money(orders.filter(o => o.status === 'done').reduce((s, o) => s + o.subtotal, 0));
+    const mes = hoje().slice(0, 7);   // AAAA-MM
+    $('#stat-sales').textContent = money(orders.filter(o => o.status === 'done' && o.date.startsWith(mes)).reduce((s, o) => s + o.subtotal, 0));
 
-    const novo = orders.find(o => o.status === 'pending');
+    const novo = [...orders].reverse().find(o => o.status === 'pending');   // o mais antigo esperando
     $('#pp-notice').innerHTML = novo
       ? `<div class="pp-notice-main">${icon('clock')}<div><strong>Tem pedido novo esperando por você.</strong><span class="sub">Pedido #${novo.id} · ${esc(novo.customer)} · ${novo.type} · ${money(novo.total)}</span></div></div><a class="pp-btn light" href="pedidos.html">Conferir pedido</a>`
       : `<div class="pp-notice-main">${icon('circlecheck')}<div><strong>Tudo em dia por aqui.</strong><span class="sub">Nenhum pedido aguardando confirmação.</span></div></div><a class="pp-btn light" href="pedidos.html">Ver pedidos</a>`;
@@ -183,8 +212,8 @@
     $('#product-count').textContent = `${products.length} ${products.length === 1 ? 'produto' : 'produtos'}`;
     $('#product-table').innerHTML = list.length ? list.map(p => `
       <div class="pp-prow body${p.id === editingId ? ' selected' : ''}">
-        <div><strong>${esc(p.name)}</strong><small>Pacote de ${p.weight} kg</small></div>
-        <span class="cat">${esc(p.category)}</span><span>${p.weight} kg</span><strong>${money(p.price)}</strong>
+        <div><strong>${esc(p.name)}</strong><small>Pacote de ${kg(p.weight)} kg</small></div>
+        <span class="cat">${esc(p.category)}</span><span>${kg(p.weight)} kg</span><strong>${money(p.price)}</strong>
         <span>${p.active ? '<span class="pp-status active">Disponível</span>' : '<span class="pp-status off">Indisponível</span>'}</span>
         <div class="pp-acts"><button class="pp-link" type="button" data-edit="${p.id}">${icon('pencil')}Editar</button><button class="pp-link del" type="button" data-del="${p.id}">${icon('trash')}Excluir</button></div>
       </div>`).join('') : '<div class="pp-empty" style="background:#fff;border-top:1px solid #eceae4">Nenhum produto encontrado.</div>';
@@ -197,15 +226,22 @@
       if (f.size > 5 * 1024 * 1024) { toast('A foto precisa ter até 5 MB.'); e.target.value = ''; return; }
       photoFile = f.name; photoUrl = URL.createObjectURL(f); showPhoto(photoUrl, f.name);
     });
-    $('#product-form').addEventListener('submit', e => {
+    $('#product-form').addEventListener('submit', async e => {
       e.preventDefault();
       const num = v => Number(String(v).replace(/\./g, '').replace(',', '.')) || 0;
-      const rec = { id: editingId ?? Date.now(), name: $('#product-name').value.trim(), weight: num($('#product-weight').value), price: num($('#product-price').value), category: $('#product-category').value, description: $('#product-description').value.trim(), active: $('#product-active').checked };
+      const rec = { name: $('#product-name').value.trim(), weight: num($('#product-weight').value), price: num($('#product-price').value), category: $('#product-category').value, description: $('#product-description').value.trim(), active: $('#product-active').checked };
       if (!rec.name || !(rec.weight > 0) || !(rec.price > 0) || !rec.category) { toast('Preencha nome, preço, peso e categoria.'); return; }
-      const antigo = products.find(p => p.id === editingId);
-      rec.image = photoFile ? '' : (antigo?.image || '');   // foto enviada fica só nesta sessão (a API guardará depois)
-      if (editingId) products = products.map(p => p.id === editingId ? rec : p); else products.push(rec);
-      save('pp-products-v2', products); const era = editingId; resetProductForm(); toast(era ? 'Produto atualizado.' : 'Produto cadastrado.');
+      const corpo = { nome: rec.name, descricao: rec.description, preco: rec.price, peso: rec.weight, categoria: rec.category, disponivel: rec.active ? 1 : 0 };
+      if (!editingId) corpo.imagem = IMG[rec.weight] || IMG[5];   // produto novo começa com a foto padrão do tamanho
+      const botao = $('#product-submit'); botao.disabled = true;
+      try {
+        if (editingId) await api(`/produtos/${editingId}`, { method: 'PUT', body: JSON.stringify(corpo) });
+        else await api('/produtos', { method: 'POST', body: JSON.stringify(corpo) });
+        await carregarProdutos();
+        const era = editingId, comFoto = photoFile; resetProductForm();
+        toast((era ? 'Produto atualizado.' : 'Produto cadastrado.') + (comFoto ? ' A foto nova ainda não é enviada; ficou a foto atual.' : ''));
+      } catch (erro) { toast(erro.message); }
+      finally { botao.disabled = false; }
     });
     $('#product-table').addEventListener('click', e => {
       const ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del]');
@@ -216,12 +252,16 @@
         openModal($('#product-modal'), '[data-close-modal].secondary');
       }
     });
-    $('#confirm-delete-product').addEventListener('click', () => {
-      products = products.filter(p => p.id !== pendingDeleteId); save('pp-products-v2', products);
-      if (editingId === pendingDeleteId) resetProductForm();
-      closeModal($('#product-modal')); pendingDeleteId = null; renderProducts(); toast('Produto excluído.');
+    $('#confirm-delete-product').addEventListener('click', async () => {
+      const id = pendingDeleteId; closeModal($('#product-modal')); pendingDeleteId = null;
+      try {
+        await api(`/produtos/${id}`, { method: 'DELETE' });
+        await carregarProdutos();
+        if (editingId === id) resetProductForm(); else renderProducts();
+        toast('Produto excluído.');
+      } catch (erro) { toast(erro.message); }   // ex.: produto que já foi vendido não pode ser excluído
     });
-    resetProductForm();
+    carregarProdutos().then(resetProductForm).catch(erro => { resetProductForm(); toast(erro.message); });
   }
 
   /* ---------- PEDIDOS ---------- */
@@ -236,19 +276,21 @@
   function renderOrders() {
     if (page !== 'pedidos') return;
     const period = $('#order-period').value;
-    const now = new Date(), hoje = now.toISOString().slice(0, 10), semana = new Date(now - 7 * 864e5).toISOString().slice(0, 10), mes = hoje.slice(0, 8) + '01';
-    const vis = orders.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (period === 'all' || (period === 'today' ? o.date === hoje : period === 'week' ? o.date >= semana : o.date >= mes)));
+    const dia = hoje(), semana = diaLocal(new Date(Date.now() - 7 * 864e5)), mes = dia.slice(0, 8) + '01';
+    const vis = orders.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (period === 'all' || (period === 'today' ? o.date === dia : period === 'week' ? o.date >= semana : o.date >= mes)));
     $('#order-count').textContent = `${vis.length} ${vis.length === 1 ? 'pedido' : 'pedidos'}`;
     $('#order-list').innerHTML = vis.length ? vis.map(o => {
       const [ic, txt, cls] = footInfo(o);
       const adv = { pending: ['arrow', 'Aceitar e preparar'], preparing: ['arrow', 'Marcar como pronto'], ready: ['check', 'Concluir pedido'] }[o.status];
-      const acts = adv ? `<div class="pp-order-actions"><button class="pp-btn secondary" type="button" data-cancel="${o.id}">Cancelar</button><button class="pp-btn" type="button" data-advance="${o.id}">${icon(adv[0])}${adv[1]}</button></div>` : '';
+      // A loja só pode cancelar enquanto o pedido está pendente ou preparando (regra da API)
+      const podeCancelar = ['pending', 'preparing'].includes(o.status);
+      const acts = adv ? `<div class="pp-order-actions">${podeCancelar ? `<button class="pp-btn secondary" type="button" data-cancel="${o.id}">Cancelar</button>` : ''}<button class="pp-btn" type="button" data-advance="${o.id}">${icon(adv[0])}${adv[1]}</button></div>` : '';
       return `<article class="pp-card pp-order">
         <div class="pp-order-head"><div class="l"><span class="pp-order-id">Pedido #${o.id}</span>${badge(o.status)}</div><span class="pp-order-date">${dataBR(o.date)} · ${o.time}</span></div>
         <div class="pp-order-body">
           <div><span class="pp-order-label">Cliente</span><strong class="cname">${esc(o.customer)}</strong><p>${icon('phone')}${esc(o.phone)}</p></div>
-          <div><span class="pp-order-label">Itens do pedido</span><strong>${esc(o.items)}</strong><p>Subtotal ${money(o.subtotal)}</p></div>
-          <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}${o.type === 'Retirada' ? ' · endereço de exemplo' : ''}</p></div>
+          <div><span class="pp-order-label">Itens do pedido</span><strong>${esc(o.items)}</strong><p>Subtotal ${money(o.subtotal)}${o.note ? ` · Obs.: ${esc(o.note)}` : ''}</p></div>
+          <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}</p></div>
           <div class="pp-order-total"><span class="pp-order-label" style="justify-content:flex-end">Total</span><div class="v">${money(o.total)}</div></div>
         </div>
         <div class="pp-order-foot${acts ? '' : ' noact'}"><span class="${cls}">${icon(ic)}${txt}</span>${acts}</div>
@@ -265,8 +307,8 @@
       const adv = e.target.closest('[data-advance]'), can = e.target.closest('[data-cancel]');
       if (adv) {
         const o = orders.find(x => x.id === Number(adv.dataset.advance)); if (!o) return;
-        o.status = { pending: 'preparing', preparing: 'ready', ready: 'done' }[o.status] || o.status;
-        save('pp-orders-v2', orders); renderOrders(); toast(`Pedido #${o.id} agora está ${STATUS[o.status].toLowerCase()}.`);
+        const proximo = { pending: 'preparing', preparing: 'ready', ready: 'done' }[o.status]; if (!proximo) return;
+        mudarStatus(o, proximo, adv);
       }
       if (can) {
         const o = orders.find(x => x.id === Number(can.dataset.cancel)); if (!o) return; pendingCancelId = o.id;
@@ -276,33 +318,58 @@
     });
     $('#confirm-cancel-order').addEventListener('click', () => {
       const o = orders.find(x => x.id === pendingCancelId); if (!o) return;
-      const antes = o.status; o.status = 'cancelled'; save('pp-orders-v2', orders);
-      closeModal($('#cancel-modal')); renderOrders();
-      toast(`Pedido #${o.id} cancelado.`, () => { o.status = antes; save('pp-orders-v2', orders); renderOrders(); toast('Cancelamento desfeito.'); });
-      pendingCancelId = null;
+      closeModal($('#cancel-modal')); pendingCancelId = null;
+      mudarStatus(o, 'cancelled');   // cancelar não tem volta, por isso não há "Desfazer"
     });
-    renderOrders();
+    // Manda o novo status para a API e recarrega a lista
+    async function mudarStatus(o, novo, botao) {
+      if (botao) botao.disabled = true;
+      try {
+        await api(`/pedidos/${o.id}/status`, { method: 'PATCH', body: JSON.stringify({ status: PARA_API[novo] }) });
+        await carregarPedidos(); renderOrders();
+        toast(`Pedido #${o.id} agora está ${STATUS[novo].toLowerCase()}.`);
+      } catch (erro) { toast(erro.message); if (botao) botao.disabled = false; }
+    }
+    carregarLoja().then(l => { enderecoLoja = l.endereco || ''; return carregarPedidos(); })
+      .then(renderOrders)
+      .catch(erro => { renderOrders(); toast(erro.message); });
   }
 
   /* ---------- MEU COMÉRCIO ---------- */
   const keys = ['name', 'phone', 'street', 'number', 'neighborhood', 'city', 'hours'];
-  const defaults = { name: 'Carvão do Pedro', phone: '(69) 99999-0000', street: 'Rua das Castanheiras', number: '120', neighborhood: 'Centro', city: 'Porto Velho / RO', hours: 'Segunda a sábado, das 8h às 18h' };
   function renderPreview() {
     const d = Object.fromEntries(keys.map(k => [k, $('#store-' + k).value]));
     $('#preview-address').textContent = `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`;
     $('#preview-phone').textContent = d.phone; $('#preview-hours').textContent = d.hours;
   }
+  // O banco guarda o endereço numa linha só: "Rua, número · bairro · cidade"
+  const separarEndereco = (e = '') => {
+    const m = e.match(/^(.*?),\s*([^·]+?)\s*·\s*(.*?)\s*·\s*(.*)$/);
+    return m ? { street: m[1], number: m[2], neighborhood: m[3], city: m[4] } : { street: e, number: '', neighborhood: '', city: '' };
+  };
   if (page === 'comercio') {
-    const s = { ...defaults, ...read('pp-store', {}) };
-    keys.forEach(k => { $('#store-' + k).value = s[k]; $('#store-' + k).addEventListener('input', renderPreview); });
-    renderPreview();
-    $('#store-form').addEventListener('submit', e => {
+    keys.forEach(k => $('#store-' + k).addEventListener('input', renderPreview));
+    carregarLoja().then(l => {
+      const v = { name: l.nome_comercio || '', phone: l.telefone || '', hours: l.horario || '', ...separarEndereco(l.endereco || '') };
+      keys.forEach(k => { $('#store-' + k).value = v[k] || ''; });
+      renderPreview();
+    });
+    $('#store-form').addEventListener('submit', async e => {
       e.preventDefault();
       const d = Object.fromEntries(keys.map(k => [k, $('#store-' + k).value.trim()]));
       if (keys.some(k => !d[k])) { toast('Preencha todos os campos.'); return; }
-      save('pp-store', d); renderPreview(); toast('Dados do comércio salvos.');
+      try {
+        await api('/comercio', { method: 'PUT', body: JSON.stringify({
+          nome_comercio: d.name, telefone: d.phone, horario: d.hours,
+          endereco: `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`
+        }) });
+        renderPreview(); toast('Dados do comércio salvos.');
+      } catch (erro) { toast(erro.message); }
     });
   }
 
-  renderDashboard();
+  // O painel precisa dos pedidos e dos produtos para montar os números
+  if (page === 'painel') {
+    Promise.all([carregarPedidos(), carregarProdutos()]).then(renderDashboard).catch(erro => { renderDashboard(); toast(erro.message); });
+  }
 })();
