@@ -41,7 +41,7 @@ function registrarErro(chave) {
 router.post('/cadastro', async (req, res) => {
   const { nome, email, whatsapp, senha } = req.body || {};
 
-  if (!nome || !email || !whatsapp || !senha) {
+  if (![nome, email, whatsapp, senha].every(ehTexto) || !nome.trim() || !email.trim() || !whatsapp.trim() || !senha) {
     return res.status(400).json({ erro: 'Nome, e-mail, WhatsApp e senha são obrigatórios' });
   }
 
