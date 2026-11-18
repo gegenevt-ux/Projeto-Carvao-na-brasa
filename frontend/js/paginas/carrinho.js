@@ -34,14 +34,14 @@ function desenhar() {
     <li class="item-carrinho">
       <img src="${produto.imagem}" alt="">
       <div>
-        <h3>${produto.nome}</h3>
+        <h3>${produto.nome}<span class="so-leitor"> ${produto.peso} kg, ${produto.categoria}</span></h3>
         <p>Pacote de ${produto.peso} kg · ${produto.categoria}</p>
         <p>${formatarPreco(produto.preco)} / unidade</p>
         <button type="button" class="remover" data-remover="${produto.id}">
-          ${icone('lixeira')} Remover</button>
+        ${icone('lixeira')} Remover<span class="so-leitor"> ${produto.nome} ${produto.peso} kg, ${produto.categoria}</span></button>  
       </div>
       <div class="item-carrinho-lado">
-        <div class="quantidade" role="group" aria-label="Quantidade de ${produto.nome} ${produto.peso} kg">
+        <div class="quantidade" role="group" aria-label="Quantidade de ${produto.nome} ${produto.peso} kg, ${produto.categoria}">
           <button type="button" data-menos="${produto.id}" aria-label="Diminuir" ${quantidade <= 1 ? 'disabled' : ''}>${icone('menos')}</button>
           <output>${quantidade}</output>
           <button type="button" data-mais="${produto.id}" aria-label="Aumentar">${icone('mais')}</button>
@@ -54,6 +54,7 @@ function desenhar() {
     <div class="duas-colunas">
       <section class="painel" aria-label="Produtos no carrinho">
         <div class="lista-carrinho-topo"><span>Produto</span><span>Quantidade / total</span></div>
+        <h2 class="so-leitor">Itens do carrinho</h2>
         <ul>${linhas}</ul>
         <div class="lista-carrinho-fim">
           <a class="link-laranja" href="catalogo.html">${icone('voltar')} Continuar comprando</a>
