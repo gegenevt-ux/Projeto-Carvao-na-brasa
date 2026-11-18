@@ -121,7 +121,7 @@ function desenhar() {
           <div class="lista-pedidos">${antigos.map(cardPedido).join('')}</div>
         </details>` : ''}`;
     lista.querySelector('.historico')?.addEventListener('toggle', e => { historicoAberto = e.target.open; });
-  else {
+  } else {
     lista.innerHTML = visiveis.map(cardPedido).join('');
   }
 }
