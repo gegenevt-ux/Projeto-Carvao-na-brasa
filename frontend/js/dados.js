@@ -1,5 +1,12 @@
 let PRODUTOS = [];
 
+// Troca os sinais que viram código no HTML (< > & " ') por versões seguras.
+// Assim, se alguém cadastrar um produto com código no nome, ele aparece como texto.
+function protegido(texto) {
+  return String(texto ?? '').replace(/[&<>"']/g, sinal =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[sinal]);
+}
+
 async function carregarProdutos() {
   const produtos = await requisicaoAPI('/produtos');
   if (!Array.isArray(produtos)) {
@@ -26,7 +33,10 @@ async function carregarProdutos() {
       preco: Number(produto.preco),
       peso: Number(produto.peso),
       disponivel: Number(produto.disponivel),
-      imagem
+      nome: protegido(produto.nome),
+      descricao: protegido(produto.descricao),
+      categoria: protegido(produto.categoria),
+      imagem: protegido(imagem)
     };
   });
 
