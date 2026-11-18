@@ -865,3 +865,10 @@
 
 /* Endereço do rodapé em branco (os dados da loja vêm do painel) */
 .rodape address [data-loja] { color: inherit; font-size: inherit; }
+
+/* Nome e WhatsApp do finalizar: só leitura (vêm da conta) */
+.input[readonly] { background: var(--fundo); color: var(--texto-suave); cursor: default; }
+
+/* --- Página 404 --- */
+.pagina-404 { max-width: 560px; padding-block: 24px 48px; }
+.pagina-404-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 16px; }
