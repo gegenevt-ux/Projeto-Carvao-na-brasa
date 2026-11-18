@@ -200,7 +200,7 @@ router.get('/', soComerciante, async (req, res) => {
       args.push(status);
     }
     sql += ' ORDER BY p.data DESC, p.id DESC';
-    res.json(await comItens(await consultar(sql, args))).map(semCodigo));
+    res.json((await comItens(await consultar(sql, args))).map(semCodigo));
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Não foi possível buscar os pedidos.' });
