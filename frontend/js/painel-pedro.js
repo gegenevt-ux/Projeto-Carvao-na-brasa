@@ -57,7 +57,7 @@
   const nav = [
     ['painel', 'Painel', 'painel.html', 'dashboard'],
     ['produtos', 'Produtos', 'produtos.html', 'package'],
-    ['pedidos', 'Pedidos', 'pedidos_pedro.html', 'clipboard'],
+    ['pedidos', 'Pedidos', 'pedidos.html', 'clipboard'],
     ['comercio', 'Meu comércio', 'comercio.html', 'store']
   ];
   const crumb = (nav.find(n => n[0] === page) || [])[1] || '';
@@ -137,8 +137,8 @@
 
     const novo = orders.find(o => o.status === 'pending');
     $('#pp-notice').innerHTML = novo
-      ? `<div class="pp-notice-main">${icon('clock')}<div><strong>Tem pedido novo esperando por você.</strong><span class="sub">Pedido #${novo.id} · ${esc(novo.customer)} · ${novo.type} · ${money(novo.total)}</span></div></div><a class="pp-btn light" href="pedidos_pedro.html">Conferir pedido</a>`
-      : `<div class="pp-notice-main">${icon('circlecheck')}<div><strong>Tudo em dia por aqui.</strong><span class="sub">Nenhum pedido aguardando confirmação.</span></div></div><a class="pp-btn light" href="pedidos_pedro.html">Ver pedidos</a>`;
+      ? `<div class="pp-notice-main">${icon('clock')}<div><strong>Tem pedido novo esperando por você.</strong><span class="sub">Pedido #${novo.id} · ${esc(novo.customer)} · ${novo.type} · ${money(novo.total)}</span></div></div><a class="pp-btn light" href="pedidos.html">Conferir pedido</a>`
+      : `<div class="pp-notice-main">${icon('circlecheck')}<div><strong>Tudo em dia por aqui.</strong><span class="sub">Nenhum pedido aguardando confirmação.</span></div></div><a class="pp-btn light" href="pedidos.html">Ver pedidos</a>`;
 
     $('#dashboard-orders').innerHTML = orders.slice(0, 5).map(o => `
       <div class="pp-trow body">
@@ -146,7 +146,7 @@
         <div><strong style="font-size:13px">${esc(o.customer)}</strong><small>${dataBR(o.date)} · ${o.time}</small></div>
         <span class="c3">${o.type}</span><span>${badge(o.status)}</span>
         <strong class="c5" style="padding-left:30px">${money(o.total)}</strong>
-        <a class="arrow" href="pedidos_pedro.html" aria-label="Abrir pedido #${o.id}">${icon('upright')}</a>
+        <a class="arrow" href="pedidos.html" aria-label="Abrir pedido #${o.id}">${icon('upright')}</a>
       </div>`).join('') || '<div class="pp-empty">Nenhum pedido ainda.</div>';
   }
 
