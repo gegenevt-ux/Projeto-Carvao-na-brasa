@@ -55,9 +55,9 @@ function criarCardProduto(produto, modo = 'ver') {
     botao = `<button class="btn btn-bloco" disabled>Indisponível</button>`;
   } else if (modo === 'adicionar') {
     botao = `<button class="btn btn-bloco" data-adicionar="${produto.id}">
-               ${icone('mais')} Adicionar ao carrinho</button>`;
+               ${icone('mais')} Adicionar ao carrinho<span class="so-leitor">: ${produto.nome} ${produto.peso} kg, ${produto.categoria}</span></button>`;
   } else {
-    botao = `<a class="btn btn-bloco" href="${link}">${icone('mais')} Ver produto</a>`;
+    botao = `<a class="btn btn-bloco" href="${link}">${icone('mais')} Ver produto<span class="so-leitor">: ${produto.nome} ${produto.peso} kg, ${produto.categoria}</span></a>`;
   }
 
   return `
@@ -73,7 +73,7 @@ function criarCardProduto(produto, modo = 'ver') {
             ${disponivel ? 'Disponível' : 'Indisponível'}
           </span>
         </div>
-        <h3><a href="${link}">${produto.nome}</a></h3>
+        <h3><a href="${link}">${produto.nome}<span class="so-leitor"> ${produto.peso} kg, ${produto.categoria}</span></a></h3>
         <p class="card-produto-preco">
           <strong>${formatarPreco(produto.preco)}</strong>
           <span>/ pacote de ${produto.peso} kg</span>
