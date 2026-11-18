@@ -89,6 +89,7 @@ function montarRodape(completo = false) {
             <a href="trocas.html">Trocas e cancelamento</a>
           </nav>
           <p>©2026 Carvão do Pedro. Todos os direitos reservados.</p>
+          <p class="rodape-empresa" data-loja-empresa ${textoEmpresa() ? '' : 'hidden'}>${escaparHTML(textoEmpresa())}</p>
         </div>
       </div>
       ${fim}
