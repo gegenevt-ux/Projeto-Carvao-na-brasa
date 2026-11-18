@@ -43,7 +43,7 @@ const LOJA = {
   telefone: '(69) 99999-0000',
   horario: 'Segunda a sábado, das 8h às 18h',
   taxaEntrega: 8.0
-
+};
   /* Os dados acima são só a reserva. Os de verdade vêm do painel do Pedro
    (rota /comercio). Ficam guardados na aba do navegador para a próxima
    página já abrir certa, e são buscados de novo a cada página. */
