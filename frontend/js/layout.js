@@ -83,7 +83,13 @@ function montarRodape(completo = false) {
           ${LOJA.endereco}<br>
           <span>${LOJA.telefone} · ${LOJA.horario}</span>
         </address>
-        <p class="rodape-nota">©2026 Carvão do Pedro. Todos os direitos reservados.</p>
+       <div class="rodape-nota">
+          <nav class="rodape-links" aria-label="Informações">
+            <a href="privacidade.html">Privacidade</a>
+            <a href="trocas.html">Trocas e cancelamento</a>
+          </nav>
+          <p>©2026 Carvão do Pedro. Todos os direitos reservados.</p>
+        </div>
       </div>
       ${fim}
     </footer>`;
