@@ -9,11 +9,11 @@ const ETAPAS = [
 
 /* Como cada status aparece na tela */
 const STATUS = {
-  pendente:   { rotulo: 'Pendente',   badge: 'badge-laranja',  mensagem: 'Aguardando confirmação da loja. Seu pedido foi enviado.' },
+  pendente:   { rotulo: 'Pendente',   badge: 'badge-laranja',  mensagem: 'Pedido enviado. Aguardando confirmação da loja.' },
   preparando: { rotulo: 'Preparando', badge: 'badge-laranja',  mensagem: 'A loja já está separando o seu carvão.' },
   pronto:     { rotulo: 'Pronto',     badge: 'badge-verde',    mensagem: '' },  // depende de entrega/retirada
   concluido:  { rotulo: 'Concluído',  badge: 'badge-verde',    mensagem: 'Pedido concluído. Bom churrasco!' },
-  cancelado:  { rotulo: 'Cancelado',  badge: 'badge-vermelho', mensagem: 'Pedido cancelado. O preparo não foi iniciado e não há valor a pagar.' }
+  cancelado:  { rotulo: 'Cancelado',  badge: 'badge-vermelho', mensagem: 'Pedido cancelado. Não há nada a pagar.' }
 };
 
 function normalizarPedido(pedido) {
