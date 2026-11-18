@@ -26,7 +26,7 @@ async function entrar(email, senha) {
    // Cliente e comerciante usam o mesmo login; o "tipo" diz para onde cada um vai
   iniciarSessao({ ...resposta.usuario, tipo: resposta.tipo }, resposta.token);
   return { ok: true, tipo: resposta.tipo };
-  
+}
 function iniciarSessao(cliente, token) {
   localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ ...cliente, token }));
 }
