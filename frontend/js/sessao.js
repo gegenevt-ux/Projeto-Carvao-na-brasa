@@ -23,13 +23,10 @@ async function entrar(email, senha) {
     method: 'POST',
     body: JSON.stringify({ email: email.trim().toLowerCase(), senha })
   });
-  if (resposta.tipo !== 'cliente') {
-    return { ok: false, erro: 'Esta área está disponível apenas para clientes.' };
-  }
+   // Cliente e comerciante usam o mesmo login; o "tipo" diz para onde cada um vai
   iniciarSessao({ ...resposta.usuario, tipo: resposta.tipo }, resposta.token);
-  return { ok: true };
+  return { ok: true, tipo: resposta.tipo };
 }
-
 function iniciarSessao(cliente, token) {
   localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ ...cliente, token }));
 }

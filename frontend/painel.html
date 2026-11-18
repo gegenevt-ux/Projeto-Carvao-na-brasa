@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel | Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/painel-pedro.css">
+</head>
+<body class="pp-body" data-page="painel">
+<div class="pp-shell">
+  <aside class="pp-sidebar" id="pp-sidebar"></aside>
+  <div class="pp-main">
+    <header class="pp-topbar" id="pp-topbar"></header>
+    <main class="pp-page">
+      <div class="pp-page-head">
+        <div>
+          <span class="pp-eyebrow" id="today-label"></span>
+          <h1 class="pp-title">Olá, Pedro</h1>
+          <p class="pp-subtitle">Aqui está o movimento da sua loja. Vamos acender os pedidos?</p>
+        </div>
+        <a class="pp-btn" href="pedidos.html" data-icon-after="arrow">Ver pedidos</a>
+      </div>
+
+      <section class="pp-stats">
+        <article class="pp-card pp-stat"><span class="pp-stat-label">Pedidos de hoje</span><span data-icon="clipboard" data-cls="pp-stat-icon"></span><div class="pp-stat-value" id="stat-orders">0</div><div class="pp-stat-foot" id="stat-orders-foot"></div></article>
+        <article class="pp-card pp-stat"><span class="pp-stat-label">Produtos ativos</span><span data-icon="package" data-cls="pp-stat-icon"></span><div class="pp-stat-value" id="stat-products">0</div><div class="pp-stat-foot" id="stat-products-foot"></div></article>
+        <article class="pp-card pp-stat"><span class="pp-stat-label">Vendas do mês</span><span data-icon="wallet" data-cls="pp-stat-icon"></span><div class="pp-stat-value" id="stat-sales">R$ 0,00</div><div class="pp-stat-foot">Produtos de pedidos concluídos · sem taxas</div></article>
+      </section>
+
+      <div class="pp-notice" id="pp-notice"></div>
+
+      <section class="pp-card">
+        <div class="pp-section-head"><h2>Pedidos recentes</h2><a href="pedidos.html">Ver todos os pedidos →</a></div>
+        <div class="pp-table-scroll">
+          <div class="pp-trow head"><span>PEDIDO</span><span>CLIENTE / DATA</span><span>MODALIDADE</span><span>STATUS</span><span>TOTAL</span><span></span></div>
+          <div id="dashboard-orders"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="pp-footer" id="pp-footer"></footer>
+  </div>
+</div>
+<div class="pp-toast" role="status" aria-live="polite"></div>
+<script src="js/painel-pedro.js"></script>
+</body>
+</html>

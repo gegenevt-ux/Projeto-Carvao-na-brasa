@@ -5,6 +5,10 @@
 // Já está logado? Não faz sentido ver o login.
 if (clienteLogado()) location.replace(destinoDepoisDoLogin());
 
+// O Pedro já logado vai direto para o painel dele
+const sessaoAtual = lerJSON(CHAVE_SESSAO, null);
+if (sessaoAtual && sessaoAtual.tipo === 'comerciante' && sessaoAtual.token) location.replace('painel.html');
+
 montarLayout(null, { simples: true });
 aplicarIcones();
 ativarMostrarSenha();
@@ -31,7 +35,7 @@ form.addEventListener('submit', async (evento) => {
       form.senha.focus();
       return;
     }
-    location.href = destinoDepoisDoLogin();
+    location.href = resultado.tipo === 'comerciante' ? 'painel.html' : destinoDepoisDoLogin();
   } catch (erro) {
     erroGeral.textContent = erro.message;
     form.senha.value = '';
