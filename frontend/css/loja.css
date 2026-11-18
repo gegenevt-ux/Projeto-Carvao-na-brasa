@@ -786,3 +786,13 @@
 .btn-perigo { background: var(--vermelho); }
 .btn-perigo:hover { background: #9E2B15; }
 @media (max-width: 420px) { .caixa-confirmar-rodape { flex-direction: column-reverse; } .caixa-confirmar-rodape .btn { width: 100%; min-height: 44px; } }
+
+/* --- Histórico de pedidos (gaveta em "Meus pedidos") --- */
+.historico { border-top: 1px solid var(--borda); padding-top: 8px; }
+.historico > summary { cursor: pointer; padding: 10px 0; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 8px; }
+.historico > summary::-webkit-details-marker { display: none; }
+.historico > summary::before { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .15s; margin-right: 4px; }
+.historico[open] > summary::before { transform: rotate(45deg); }
+.historico > summary .suave { font-weight: 400; }
+.historico .lista-pedidos { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .historico > summary::before { transition: none; } }
