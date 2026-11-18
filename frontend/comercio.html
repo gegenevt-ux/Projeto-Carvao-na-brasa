@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu comércio | Carvão do Pedro</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/painel-pedro.css">
+</head>
+<body class="pp-body" data-page="comercio">
+<div class="pp-shell">
+  <aside class="pp-sidebar" id="pp-sidebar"></aside>
+  <div class="pp-main">
+    <header class="pp-topbar" id="pp-topbar"></header>
+    <main class="pp-page">
+      <div class="pp-page-head"><div>
+        <h1 class="pp-title">Meu comércio</h1>
+        <p class="pp-subtitle">Mantenha os dados da loja em dia para seus clientes.</p>
+      </div></div>
+
+      <section class="pp-store-layout">
+        <form class="pp-card pp-store-form" id="store-form" novalidate>
+          <h2>Dados do comércio</h2>
+          <p class="sub">Endereço, telefone e horário abaixo são dados de exemplo. Substitua pelas informações reais antes de publicar.</p>
+          <div class="pp-fgrid" style="grid-template-columns:1fr">
+            <div class="pp-field"><label for="store-name">Nome do comércio</label><input class="pp-input" id="store-name"></div>
+            <div class="pp-field"><label for="store-phone">Telefone / WhatsApp</label><input class="pp-input" id="store-phone" placeholder="(00) 00000-0000"></div>
+          </div>
+          <hr class="pp-divider">
+          <h3>Endereço da loja</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr;gap:26px 14px">
+            <div class="pp-field" style="grid-column:span 5"><label for="store-street">Rua / avenida</label><input class="pp-input" id="store-street"></div>
+            <div class="pp-field"><label for="store-number">Número</label><input class="pp-input" id="store-number"></div>
+            <div class="pp-field" style="grid-column:span 3"><label for="store-neighborhood">Bairro</label><input class="pp-input" id="store-neighborhood"></div>
+            <div class="pp-field" style="grid-column:span 3"><label for="store-city">Cidade / UF</label><input class="pp-input" id="store-city"></div>
+            <div class="pp-field" style="grid-column:1/-1"><label for="store-hours">Horário de funcionamento</label><input class="pp-input" id="store-hours"></div>
+          </div>
+          <div class="pp-store-foot"><span>Essas informações aparecem no rodapé da loja e na opção de retirada.</span><button class="pp-btn sm" type="submit" data-icon-before="check">Salvar alterações</button></div>
+        </form>
+
+        <aside>
+          <div class="pp-preview-label">Como aparece para o cliente</div>
+          <div class="pp-store-preview">
+            <div class="pp-store-preview-brand"><span class="pp-brand-icon" data-icon="flame"></span><span>CARVÃO DO<br>PEDRO</span></div>
+            <div class="pp-prow-info"><span data-icon="pin"></span><span id="preview-address"></span></div>
+            <div class="pp-prow-info"><span data-icon="phone"></span><span id="preview-phone"></span></div>
+            <div class="pp-prow-info"><span data-icon="clock"></span><span id="preview-hours"></span></div>
+            <small>Endereço, telefone e horário ilustrativos. Dados de exemplo.</small>
+          </div>
+          <div class="pp-info" style="height:auto;padding:16px 17px;align-items:flex-start;line-height:1.5"><span data-icon="info"></span>Um endereço completo ajuda o cliente a encontrar a loja na hora de retirar o pedido.</div>
+        </aside>
+      </section>
+    </main>
+    <footer class="pp-footer" id="pp-footer"></footer>
+  </div>
+</div>
+<div class="pp-toast" role="status" aria-live="polite"></div>
+<script src="js/painel-pedro.js"></script>
+</body>
+</html>
