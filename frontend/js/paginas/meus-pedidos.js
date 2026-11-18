@@ -15,6 +15,7 @@ const FILTROS = [
   { nome: 'Cancelados',    regra: p => p.status === 'cancelado' }
 ];
 let filtroAtual = 'Todos';
+let historicoAberto = false;   // a gaveta do histórico começa fechada
 
 const filtros = document.getElementById('filtros');
 filtros.innerHTML = FILTROS.map(f =>
@@ -108,7 +109,19 @@ function desenhar() {
       </div>`;
   } else if (!visiveis.length) {
     lista.innerHTML = `<div class="estado-vazio"><strong>Nenhum pedido aqui</strong>Não há pedidos neste filtro.</div>`;
-  } else {
+  } else if (filtroAtual === 'Todos') {   //Em "Todos": pedidos em andamento em cima, e concluídos/cancelados  guardados numa gaveta "Histórico", que a pessoa abre se quiser
+    const ativos = visiveis.filter(FILTROS[1].regra);
+    const antigos = visiveis.filter(p => !FILTROS[1].regra(p));
+    const aberto = historicoAberto || !ativos.length;
+    lista.innerHTML = `
+      ${ativos.length ? ativos.map(cardPedido).join('') : '<p class="suave">Nenhum pedido em andamento.</p>'}
+      ${antigos.length ? `
+        <details class="historico" ${aberto ? 'open' : ''}>
+          <summary>Histórico <span class="suave">· ${antigos.length === 1 ? '1 pedido concluído ou cancelado' : `${antigos.length} pedidos concluídos ou cancelados`}</span></summary>
+          <div class="lista-pedidos">${antigos.map(cardPedido).join('')}</div>
+        </details>` : ''}`;
+    lista.querySelector('.historico')?.addEventListener('toggle', e => { historicoAberto = e.target.open; });
+  else {
     lista.innerHTML = visiveis.map(cardPedido).join('');
   }
 }
