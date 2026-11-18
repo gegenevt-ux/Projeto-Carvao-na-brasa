@@ -9,3 +9,4 @@ montarLayout(null);
 document.querySelectorAll('[data-loja]').forEach(campo => {
   campo.textContent = LOJA[campo.dataset.loja] || '';
 });
+preencherEmpresa();
