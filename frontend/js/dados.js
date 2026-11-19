@@ -16,6 +16,7 @@ async function carregarProdutos() {
   const imagensLocais = {
     'tradicional-3': 'assets/img/produto-tradicional-3kg.jpg',
     'tradicional-5': 'assets/img/produto-tradicional-5kg.jpg',
+    'faveiro-5': 'assets/img/produto-tradicional-5kg.jpg',
     'misto-5': 'assets/img/produto-misto-5kg.jpeg',
     'misto-10': 'assets/img/produto-misto-10kg.jpeg',
     'premium-10': 'assets/img/produto-premium-10kg.jpeg'
