@@ -89,7 +89,7 @@ function cardPedido(pedido) {
       ${caixaCodigo(pedido)}
       <a class="link-laranja link-comprovante" href="comprovante.html?id=${pedido.id}">Ver comprovante</a>
       ${pedido.status === 'pendente'
-        ? `<button type="button" class="btn" data-cancelar="${pedido.id}">Cancelar pedido</button>`
+        ? `<button type="button" class="btn btn-contorno" data-cancelar="${pedido.id}">Cancelar pedido</button>`
         : ''}
     </article>`;
 }

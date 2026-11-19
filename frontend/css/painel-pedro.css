@@ -80,15 +80,15 @@ a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer;color:in
 .pp-section-head h2{font-size:21px;letter-spacing:-.4px}
 .pp-section-head a{color:var(--o);font-size:12.5px;font-weight:700}
 .pp-trow{display:grid;padding:0 24px;align-items:center}
-.pp-trow.head{height:43px;background:#f2f1ed;color:#5f5e58;font-size:11.5px;font-weight:500;grid-template-columns:136px 477px 147px 156px 125px 1fr}
-.pp-trow.body{height:70px;border-bottom:1px solid #eceae4;grid-template-columns:136px 477px 177px 126px 155px 1fr;font-size:13.5px}
+.pp-trow.head{height:43px;background:#f2f1ed;color:#5f5e58;font-size:11.5px;font-weight:500;grid-template-columns:136px minmax(180px,1fr) 147px 156px 125px 48px}
+.pp-trow.body{height:70px;border-bottom:1px solid #eceae4;grid-template-columns:136px minmax(180px,1fr) 177px 126px 155px 48px;font-size:13.5px}
 .pp-trow.body:last-child{border-bottom:0}
 .pp-trow.body:hover{background:#fcfbf9}
 .pp-trow strong{font-weight:700}
 .pp-trow small{display:block;font-size:11.5px;color:#636259;margin-top:4px}
 .pp-trow .c3{padding-left:30px}.pp-trow .c5{padding-left:0}
 .pp-trow .arrow{color:#5f5e58;font-size:15px;padding-left:30px}
-.pp-table-scroll{overflow-x:auto}.pp-table-scroll .pp-trow{min-width:1080px}
+.pp-table-scroll{overflow-x:auto}.pp-table-scroll .pp-trow{min-width:900px}
 /* ---------- Produtos ---------- */
 .pp-products-layout{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:24px;align-items:start}
 .pp-count{text-align:right;font-size:12px;color:#636259;margin:8px 0 10px}
@@ -210,3 +210,25 @@ a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer;color:in
 .pp-nav-count{margin-left:auto}
 .pp-bell-count[hidden],.pp-nav-count[hidden]{display:none}
 .pp-link-whatsapp{color:var(--green);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+
+/* Cartão do pedido: espaço entre os blocos e botões que descem de linha no celular */
+.pp-order-list{grid-template-columns:minmax(0,1fr)}
+.pp-order-body{row-gap:18px}
+.pp-order-body>div{min-width:0}
+.pp-order-actions{flex-wrap:wrap}
+@media(max-width:1180px){.pp-order-total .pp-order-label{justify-content:flex-start!important}}
+/* Meu comércio no celular: um campo por linha onde não cabe lado a lado */
+@media(max-width:560px){.pp-store-layout .pp-fgrid{grid-template-columns:1fr!important}.pp-field:has(#store-street),.pp-field:has(#store-city){grid-column:1/-1!important}.pp-field:has(#store-number){grid-column:span 2!important}.pp-field:has(#store-neighborhood){grid-column:span 4!important}}
+/* Produtos: até 1599px o formulário fica embaixo da tabela, para nada da tabela sumir */
+@media(max-width:1599px){.pp-products-layout{grid-template-columns:1fr}}
+/* Tabela de produtos: colunas distribuídas e Editar/Excluir lado a lado no fim da linha */
+.pp-prow{grid-template-columns:minmax(170px,1.6fr) minmax(90px,1fr) minmax(56px,.6fr) minmax(84px,.8fr) minmax(120px,1fr) 150px;padding-right:16px}
+.pp-prow.head span:last-child{text-align:right}
+.pp-acts{display:flex;gap:28px;justify-content:flex-end}.pp-acts .pp-link{padding:6px 0}
+/* Até 1100px cada produto vira um cartão (a tabela não caberia) */
+@media(max-width:1100px){.pp-prow{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 16px;height:auto!important}.pp-prow.head{display:none}.pp-prow.body>div:first-child{width:100%}.pp-prow.body .pp-acts{width:100%;justify-content:flex-start}}
+/* Janelas de confirmação em celular pequeno: um botão embaixo do outro */
+@media(max-width:420px){.pp-modal-actions{grid-template-columns:1fr}}
+/* Botões pequenos mais fáceis de tocar no celular */
+.pp-mobile-menu{min-width:40px;min-height:40px;place-items:center}
+.pp-bell{padding:8px;margin:-8px}.pp-bell .pp-bell-count{top:0;right:-2px}

@@ -882,3 +882,15 @@
 
 /* Compartilhar produto */
 .compartilhar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; }
+
+* Meus pedidos: espaço entre o código, o comprovante e o botão de cancelar */
+.link-comprovante { margin-right: 20px; }
+[data-cancelar] { margin-top: 12px; }
+/* Linha do tempo em celular pequeno: os nomes das etapas não se encostam */
+@media (max-width: 400px) { .passo { font-size: 11px; padding-right: 6px; } }
+/* Página do produto em celular pequeno: o botão desce de linha em vez de passar da tela */
+.produto-grade > * { min-width: 0; }
+.comprar { flex-wrap: wrap; }
+.comprar .btn { min-width: 180px; }
+/* Botão Remover do carrinho mais fácil de tocar */
+.remover { padding: 6px 0; margin-top: 0; }

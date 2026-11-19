@@ -268,9 +268,15 @@
       } catch (erro) { toast(erro.message); }
       finally { botao.disabled = false; }
     });
-    $('#product-table').addEventListener('click', e => {
+   // Quando o formulário fica embaixo da tabela (tela menor), leva o Pedro até ele
+    function mostrarFormulario() {
+      const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      $('#product-card').scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' });
+      $('#product-name').focus({ preventScroll: true });
+    }
+     $('#product-table').addEventListener('click', e => {
       const ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del]');
-      if (ed) { const p = products.find(x => x.id === Number(ed.dataset.edit)); if (p) startEdit(p); }
+      if (ed) { const p = products.find(x => x.id === Number(ed.dataset.edit)); if (p) { startEdit(p); mostrarFormulario(); } }
       if (del) {
         const p = products.find(x => x.id === Number(del.dataset.del)); if (!p) return; pendingDeleteId = p.id;
         $('#delete-img').src = imgDe(p); $('#delete-title').textContent = `${p.name} · ${p.weight} kg`; $('#delete-sub').textContent = `${p.category} · ${money(p.price)}`;
