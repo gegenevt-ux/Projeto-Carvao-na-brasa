@@ -6,7 +6,7 @@ Pelo site, o cliente escolhe o carvão, faz o pedido para entrega ou retirada e 
 O Pedro usa um painel próprio para receber os pedidos, mudar o status, cadastrar produtos e atualizar
 os dados da loja.
 
-Trabalho da disciplina Projeto de Extensão II.
+Trabalho da disciplina Projeto de Extensão II, 2026.
 
 - Site: https://carvao-na-brasa-frontend.vercel.app
 - API: https://carvao-na-brasa-api.vercel.app
