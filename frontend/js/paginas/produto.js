@@ -31,7 +31,7 @@ function desenharProduto(produto) {
   conteudo.innerHTML = `
     <nav class="migalhas" aria-label="Você está em">
       <a href="index.html">Início</a> ${icone('direita')}
-      <a href="catalogo.html">Loja</a> ${icone('direita')}
+      <a href="catalogo.html">Produtos</a> ${icone('direita')}
       <span aria-current="page">${nomeCompleto}</span>
     </nav>
 
@@ -73,7 +73,7 @@ function desenharProduto(produto) {
         </div>
 
         <p class="dica-entrega">${icone('caminhao')}
-          Entrega por ${formatarPreco(LOJA.taxaEntrega)}, ou retirada grátis na loja. Pague com Pix pelo site, ou com dinheiro ou cartão na entrega.</p>
+          Entrega por ${formatarPreco(LOJA.taxaEntrega)}, ou retirada grátis na loja. Pague com Pix pelo site, ou com dinheiro ou cartão na entrega ou na retirada.</p>
           <div class="compartilhar">
           <button type="button" class="btn btn-contorno" id="compartilhar">Compartilhar produto</button>
           <span class="texto-apoio" id="aviso-compartilhar" role="status"></span>
