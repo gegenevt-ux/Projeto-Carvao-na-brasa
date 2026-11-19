@@ -5,7 +5,9 @@ const { soComerciante } = require( '../middlewares/auth');
 const router = express.Router();
 
 // razao_social e documento (CNPJ ou CPF) são exigidos pelo Decreto 7.962/2013 para quem vende pela internet.
-const CAMPOS = ['nome_comercio', 'endereco', 'telefone', 'horario', 'razao_social', 'documento'];
+const CAMPOS = ['nome_comercio', 'endereco', 'telefone', 'horario', 'razao_social', 'documento', 'atendimento'];
+// Como a loja atende: entrega e retirada (ambos), só entrega ou só retirada
+const ATENDIMENTOS = ['ambos', 'entrega', 'retirada'];
 const COLUNAS = CAMPOS.join(', ');
 
 // Confere os dígitos verificadores do CPF (11 números) ou do CNPJ (14 números)
@@ -75,7 +77,11 @@ router.put('/', soComerciante, async (req, res) => {
         novo[campo] = valor.trim() || null;
       }
     }
-      if (novo.documento) {
+       novo.atendimento = novo.atendimento || 'ambos';
+    if (!ATENDIMENTOS.includes(novo.atendimento)) {
+      return res.status(400).json({ erro: 'Escolha como a loja atende: ambos, entrega ou retirada.' });
+    }
+    if (novo.documento) {
       const numeros = novo.documento.replace(/\D/g, '');
       if (!documentoValido(numeros)) {
         return res.status(400).json({ erro: 'CNPJ ou CPF inválido. Confira os números.' });
