@@ -29,7 +29,10 @@ function montarCabecalho(paginaAtiva) {
     <a href="${l.href}" ${l.id === paginaAtiva ? 'aria-current="page"' : ''}>${l.texto}</a>`
   ).join('');
 
-  // Lado direito: visitante x logado
+  // O Pedro logado vendo a loja: em vez de "Entrar", um botão leva de volta ao painel
+  const sessao = lerJSON(CHAVE_SESSAO, null);
+  const pedroLogado = sessao && sessao.tipo === 'comerciante' && sessao.token;
+   // Lado direito: visitante x logado
   const acoes = cliente
     ? `<details class="menu-usuario">
          <summary aria-label="Conta de ${escaparHTML(cliente.nome)}">${icone('usuario')}<span class="menu-usuario-nome">${escaparHTML(cliente.nome)}</span>${icone('baixo', 'icone icone-seta')}</summary>
@@ -42,7 +45,9 @@ function montarCabecalho(paginaAtiva) {
          ${icone('sacola', 'icone icone-grande')}
          <span class="bolinha" id="bolinha-carrinho"></span>
        </a>`
-    : `<a class="btn" href="login.html">${icone('entrar')} Entrar</a>`;
+    : pedroLogado
+      ? `<a class="btn" href="painel.html">${icone('voltar')} Voltar ao painel</a>`
+      : `<a class="btn" href="login.html">${icone('entrar')} Entrar</a>`;
 
   return `
     <header class="cabecalho">
