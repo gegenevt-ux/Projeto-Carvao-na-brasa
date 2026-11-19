@@ -10,8 +10,8 @@
 /* 1. TOKENS — valores tirados do protótipo do Figma */
 :root {
   /* Marca */
-  --laranja: #D84D12;
-  --laranja-escuro: #B93F0C;   /* hover */
+  --laranja: #B93F0C;
+  --laranja-escuro: #9A3409;   /* hover */
   --laranja-suave: #FDEFE4;    /* fundo dos ícones e do card selecionado */
   --carvao: #1A1C19;           /* hero, rodapé, botão escuro */
 
@@ -21,11 +21,11 @@
   --cinza-claro: #ECEBE6;      /* botão desativado, cabeçalho de tabela */
   --borda: #E6E4DE;
   --texto: #1A1C19;
-  --texto-suave: #6E6B64;
+  --texto-suave: #625F58;
   --texto-no-escuro: #C9C6BE;
 
   /* Status */
-  --verde: #2E7D46;
+  --verde: #276B3C;
   --verde-fundo: #E8F3EA;
   --vermelho: #C2361B;
   --vermelho-fundo: #FDECEA;
@@ -210,3 +210,21 @@ textarea.input { min-height: 96px; resize: vertical; }
   font-size: 14px;
 }
 .alerta-erro:empty { display: none; }
+
+/* --- Só para leitor de tela: some da tela, mas é lido em voz alta --- */
+.so-leitor { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* --- "Pular para o conteúdo": aparece só quando recebe o foco do teclado --- */
+.pular-conteudo { position: absolute; left: 12px; top: -60px; z-index: 1000; padding: 10px 16px;
+  background: var(--texto); color: var(--branco); border-radius: var(--raio-pequeno); font-weight: 600; text-decoration: none; }
+.pular-conteudo:focus { top: 12px; }
+main:focus { outline: none; }
+
+/* --- Quem pede ao sistema para reduzir animações não vê movimento --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}

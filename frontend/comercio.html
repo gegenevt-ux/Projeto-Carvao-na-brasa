@@ -24,10 +24,17 @@
       <section class="pp-store-layout">
         <form class="pp-card pp-store-form" id="store-form" novalidate>
           <h2>Dados do comércio</h2>
-          <p class="sub">Endereço, telefone e horário abaixo são dados de exemplo. Substitua pelas informações reais antes de publicar.</p>
+          <p class="sub">O endereço, o telefone e o horário aparecem no rodapé da loja e para quem escolhe retirada.</p>
           <div class="pp-fgrid" style="grid-template-columns:1fr">
             <div class="pp-field"><label for="store-name">Nome do comércio</label><input class="pp-input" id="store-name"></div>
             <div class="pp-field"><label for="store-phone">Telefone / WhatsApp</label><input class="pp-input" id="store-phone" placeholder="(00) 00000-0000"></div>
+          </div>
+          <hr class="pp-divider">
+          <h3>Quem vende</h3>
+          <p class="sub" id="store-legal-help">A lei do comércio pela internet (Decreto 7.962/2013) pede o nome e o CNPJ (ou CPF) de quem vende. Eles aparecem no rodapé do site e no comprovante.</p>
+          <div class="pp-fgrid" style="grid-template-columns:1fr 1fr">
+            <div class="pp-field"><label for="store-legal">Razão social ou nome completo</label><input class="pp-input" id="store-legal" aria-describedby="store-legal-help"></div>
+            <div class="pp-field"><label for="store-doc">CNPJ ou CPF</label><input class="pp-input" id="store-doc" inputmode="numeric" placeholder="00.000.000/0000-00" aria-describedby="store-legal-help"></div>
           </div>
           <hr class="pp-divider">
           <h3>Endereço da loja</h3>
@@ -48,7 +55,8 @@
             <div class="pp-prow-info"><span data-icon="pin"></span><span id="preview-address"></span></div>
             <div class="pp-prow-info"><span data-icon="phone"></span><span id="preview-phone"></span></div>
             <div class="pp-prow-info"><span data-icon="clock"></span><span id="preview-hours"></span></div>
-            <small>Endereço, telefone e horário ilustrativos. Dados de exemplo.</small>
+            <div class="pp-prow-info" id="preview-legal-row"><span data-icon="info"></span><span id="preview-legal"></span></div>
+            <small>É assim que o cliente vê os dados da loja.</small>
           </div>
           <div class="pp-info" style="height:auto;padding:16px 17px;align-items:flex-start;line-height:1.5"><span data-icon="info"></span>Um endereço completo ajuda o cliente a encontrar a loja na hora de retirar o pedido.</div>
         </aside>

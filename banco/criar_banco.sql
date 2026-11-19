@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS "comerciante" (
 	"endereco"	TEXT,
 	"telefone"	TEXT,
 	"horario"	TEXT,
+	"razao_social"	TEXT,
+	"documento"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "item_pedido" (
@@ -36,6 +38,10 @@ CREATE TABLE IF NOT EXISTS "pedido" (
 	"bairro"	TEXT,
 	"taxa_entrega"	REAL NOT NULL DEFAULT 0,
 	"observacao"	TEXT,
+	"forma_pagamento"	TEXT CHECK("forma_pagamento" IN ('pix', 'dinheiro', 'cartao')),
+	"troco_para"	REAL,
+	"pago"	INTEGER NOT NULL DEFAULT 0 CHECK("pago" IN (0, 1)),
+	"codigo_entrega"	TEXT,
 	"total"	REAL NOT NULL,
 	"status"	TEXT NOT NULL DEFAULT 'pendente' CHECK("status" IN ('pendente', 'preparando', 'pronto', 'concluido', 'cancelado')),
 	"data"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,

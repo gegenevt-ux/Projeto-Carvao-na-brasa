@@ -32,7 +32,7 @@ function montarCabecalho(paginaAtiva) {
   // Lado direito: visitante x logado
   const acoes = cliente
     ? `<details class="menu-usuario">
-         <summary>${icone('usuario')}<span class="menu-usuario-nome">${escaparHTML(cliente.nome)}</span>${icone('baixo', 'icone icone-seta')}</summary>
+         <summary aria-label="Conta de ${escaparHTML(cliente.nome)}">${icone('usuario')}<span class="menu-usuario-nome">${escaparHTML(cliente.nome)}</span>${icone('baixo', 'icone icone-seta')}</summary>
          <div class="menu-usuario-lista">
            <a href="meus-pedidos.html">Meus pedidos</a>
            <button type="button" data-sair>${icone('sair')} Sair</button>
@@ -80,10 +80,17 @@ function montarRodape(completo = false) {
       <div class="container rodape-conteudo">
         ${topo}
         <address>
-          ${LOJA.endereco}<br>
-          <span>${LOJA.telefone} · ${LOJA.horario}</span>
+          ${campoLoja('endereco')}<br>
+           <span>${campoLoja('telefone')} · ${campoLoja('horario')}</span>
         </address>
-        <p class="rodape-nota">©2026 Carvão do Pedro. Todos os direitos reservados.</p>
+       <div class="rodape-nota">
+          <nav class="rodape-links" aria-label="Informações">
+            <a href="privacidade.html">Privacidade</a>
+            <a href="trocas.html">Trocas e cancelamento</a>
+          </nav>
+          <p>©2026 Carvão do Pedro. Todos os direitos reservados.</p>
+          <p class="rodape-empresa" data-loja-empresa ${textoEmpresa() ? '' : 'hidden'}>${escaparHTML(textoEmpresa())}</p>
+        </div>
       </div>
       ${fim}
     </footer>`;
@@ -103,7 +110,14 @@ function montarLayout(paginaAtiva, opcoes = {}) {
   document.getElementById('cabecalho').outerHTML =
     opcoes.simples ? montarCabecalhoSimples() : montarCabecalho(paginaAtiva);
   document.getElementById('rodape').outerHTML = montarRodape(opcoes.rodapeCompleto);
-
+// Link "Pular para o conteúdo": é o primeiro item do Tab e leva direto ao <main>
+  const principal = document.querySelector('main');
+  if (principal) {
+    principal.id = principal.id || 'conteudo';
+    principal.setAttribute('tabindex', '-1');
+    document.body.insertAdjacentHTML('afterbegin',
+      `<a class="pular-conteudo" href="#${principal.id}">Pular para o conteúdo</a>`);
+  }
   atualizarBolinhaCarrinho();
 
   const botaoSair = document.querySelector('[data-sair]');

@@ -27,6 +27,12 @@ async function requisicaoAPI(caminho, opcoes = {}) {
   }
 
   if (!resposta.ok) {
+    // Login vencido (o token dura 2h): apaga a sessão e manda entrar de novo
+    if (resposta.status === 401 && sessao && sessao.token && !caminho.startsWith('/auth/')) {
+      localStorage.removeItem('carvao_sessao');
+      const pagina = location.pathname.split('/').pop() + location.search;
+      location.replace(`login.html?voltar=${encodeURIComponent(pagina)}`);
+    }
     const erro = new Error(dados && dados.erro ? dados.erro : `Erro na API (${resposta.status}).`);
     erro.status = resposta.status;
     throw erro;

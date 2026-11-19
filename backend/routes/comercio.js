@@ -4,14 +4,42 @@ const { soComerciante } = require( '../middlewares/auth');
 
 const router = express.Router();
 
-// Só essas informações podem aparecer no site.
-const CAMPOS = ['nome_comercio', 'endereco', 'telefone', 'horario'];
+// razao_social e documento (CNPJ ou CPF) são exigidos pelo Decreto 7.962/2013 para quem vende pela internet.
+const CAMPOS = ['nome_comercio', 'endereco', 'telefone', 'horario', 'razao_social', 'documento'];
+const COLUNAS = CAMPOS.join(', ');
+
+// Confere os dígitos verificadores do CPF (11 números) ou do CNPJ (14 números)
+function documentoValido(numeros) {
+  if (!/^\d+$/.test(numeros) || /^(\d)\1+$/.test(numeros)) return false;
+  const digito = (base, pesos) => {
+    const soma = base.split('').reduce((total, n, i) => total + Number(n) * pesos[i], 0);
+    const resto = soma % 11;
+    return resto < 2 ? 0 : 11 - resto;
+  };
+  if (numeros.length === 11) {
+    const d1 = digito(numeros.slice(0, 9), [10, 9, 8, 7, 6, 5, 4, 3, 2]);
+    const d2 = digito(numeros.slice(0, 10), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]);
+    return numeros.endsWith(`${d1}${d2}`);
+  }
+  if (numeros.length === 14) {
+    const d1 = digito(numeros.slice(0, 12), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+    const d2 = digito(numeros.slice(0, 13), [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+    return numeros.endsWith(`${d1}${d2}`);
+  }
+  return false;
+}
+// Guarda sempre no formato de leitura: 000.000.000-00 ou 00.000.000/0000-00
+function formatarDocumento(numeros) {
+  return numeros.length === 11
+    ? numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    : numeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}
 
 // GET /comercio: mostra os dados da loja (qualquer pessoa pode ver)
 router.get('/', async (req, res) => {
   try {
     const busca = await db.execute(
-      'SELECT nome_comercio, endereco, telefone, horario FROM comerciante ORDER BY id LIMIT 1'
+      `SELECT ${COLUNAS} FROM comerciante ORDER BY id LIMIT 1`
     );
     if (busca.rows.length === 0) {
       return res.status(404).json({ erro: 'Dados da loja ainda não cadastrados.' });
@@ -28,7 +56,7 @@ router.get('/', async (req, res) => {
 router.put('/', soComerciante, async (req, res) => {
   try {
     const busca = await db.execute({
-      sql: 'SELECT nome_comercio, endereco, telefone, horario FROM comerciante WHERE id = ?',
+      sql: `SELECT ${COLUNAS} FROM comerciante WHERE id = ?`,
       args: [req.usuario.id],
     });
     if (busca.rows.length === 0) {
@@ -47,10 +75,16 @@ router.put('/', soComerciante, async (req, res) => {
         novo[campo] = valor.trim() || null;
       }
     }
-
+      if (novo.documento) {
+      const numeros = novo.documento.replace(/\D/g, '');
+      if (!documentoValido(numeros)) {
+        return res.status(400).json({ erro: 'CNPJ ou CPF inválido. Confira os números.' });
+      }
+      novo.documento = formatarDocumento(numeros);
+    }
     await db.execute({
-      sql: 'UPDATE comerciante SET nome_comercio = ?, endereco = ?, telefone = ?, horario = ? WHERE id = ?',
-      args: [novo.nome_comercio, novo.endereco, novo.telefone, novo.horario, req.usuario.id],
+      sql: `UPDATE comerciante SET ${CAMPOS.map(c => `${c} = ?`).join(', ')} WHERE id = ?`,
+      args: [...CAMPOS.map(c => novo[c]), req.usuario.id],
     });
 
     res.json({ mensagem: 'Dados da loja atualizados!', ...novo });

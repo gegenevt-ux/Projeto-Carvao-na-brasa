@@ -23,7 +23,7 @@
       </nav>
 
       <h1 class="titulo-pagina" style="margin-top: 20px">Finalizar pedido</h1>
-      <p class="subtitulo-pagina">Falta pouco para a brasa. Confira os dados e confirme seu pedido.</p>
+      <p class="subtitulo-pagina">Confira os dados e confirme seu pedido.</p>
 
       <ol class="etapas" aria-label="Etapas da compra">
         <li><a href="carrinho.html">01 Carrinho</a></li>
@@ -61,22 +61,49 @@
             <div class="caixa-info" id="info-recebimento"></div>
           </section>
 
+           <!-- Como pagar -->
+          <section class="painel painel-corpo">
+            <h2 id="titulo-pagar">Como você vai pagar?</h2>
+            <p class="texto-apoio" id="quando-paga">Com Pix, você paga aqui no site logo depois de confirmar o pedido.</p>
+            <fieldset class="opcoes-recebimento opcoes-pagamento" aria-labelledby="titulo-pagar" style="border: 0">
+              <div class="opcao">
+                <input type="radio" name="pagamento" id="pg-pix" value="pix" checked>
+                <label for="pg-pix"><strong>Pix</strong><small>Pague agora, aqui no site</small></label>
+              </div>
+              <div class="opcao">
+                <input type="radio" name="pagamento" id="pg-dinheiro" value="dinheiro">
+                <label for="pg-dinheiro"><strong>Dinheiro</strong><small>Diga se precisa de troco</small></label>
+              </div>
+              <div class="opcao">
+                <input type="radio" name="pagamento" id="pg-cartao" value="cartao">
+                <label for="pg-cartao"><strong>Cartão</strong><small>Débito ou crédito na maquininha</small></label>
+              </div>
+            </fieldset>
+            <div class="campo campo-troco" id="bloco-troco" hidden>
+              <label for="troco">Troco para quanto? (opcional)</label>
+              <input class="input" id="troco" name="troco" inputmode="decimal" placeholder="Ex.: 100,00" aria-describedby="ajuda-troco erro-troco">
+              <small class="texto-apoio" id="ajuda-troco">Deixe em branco se não precisar de troco.</small>
+              <span class="erro-campo" id="erro-troco"></span>
+            </div>
+          </section>
+
           <!-- 2. Dados + endereço -->
           <section class="painel painel-corpo">
             <h2>Seus dados</h2>
             <div class="grade-campos">
               <div class="campo">
                 <label for="nome">Nome</label>
-                <input class="input" id="nome" name="nome" autocomplete="name" required minlength="3">
+                <input class="input" id="nome" name="nome" autocomplete="name" readonly aria-describedby="ajuda-dados">
                 <span class="erro-campo" id="erro-nome"></span>
               </div>
               <div class="campo">
                 <label for="whatsapp">WhatsApp</label>
                 <input class="input" type="tel" id="whatsapp" name="whatsapp" inputmode="tel"
-                       autocomplete="tel" required data-mascara="telefone">
+                       autocomplete="tel" readonly aria-describedby="ajuda-dados">
                 <span class="erro-campo" id="erro-whatsapp"></span>
               </div>
             </div>
+            <p class="texto-apoio" id="ajuda-dados">Estes são os dados da sua conta. A loja usa este WhatsApp para falar sobre o pedido.</p>
 
             <!-- Some quando a pessoa escolhe "Retirada" -->
             <div class="separador" id="bloco-endereco">
@@ -114,8 +141,9 @@
             <div class="grade-campos">
               <div class="campo largo">
                 <label for="observacao">Observação (opcional)</label>
-                <textarea class="input" id="observacao" name="observacao" maxlength="300"
+                <textarea class="input" id="observacao" name="observacao" maxlength="200" aria-describedby="ajuda-observacao"
                           placeholder="Quer deixar alguma orientação sobre o pedido?"></textarea>
+                <small class="texto-apoio" id="ajuda-observacao">Até 200 caracteres.</small>
               </div>
             </div>
           </section>
@@ -130,7 +158,7 @@
           <p class="linha-valor"><span id="rotulo-subtotal"></span><strong id="valor-subtotal"></strong></p>
           <p class="linha-valor" id="linha-taxa"><span id="rotulo-taxa"></span><strong id="valor-taxa"></strong></p>
           <p class="resumo-total"><span>Total</span><strong id="valor-total" aria-live="polite"></strong></p>
-          <p class="aviso-pagamento"><span data-icone="carteira"></span> O pagamento é feito na entrega ou na retirada</p>
+          <p class="aviso-pagamento"><span data-icone="carteira"></span> <span id="texto-pagamento">Pagamento com Pix aqui no site, logo depois de confirmar.</span></p>
           <button class="btn btn-bloco" type="submit" form="form-pedido" data-icone-antes="check">Confirmar pedido</button>
         </aside>
       </div>

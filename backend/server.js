@@ -6,6 +6,8 @@ const pedidosRoutes = require('./routes/pedidos');
 // Aqui nasce a nossa API. A linha de baixo ensina ela a entender
 // os dados que chegam em formato JSON (é assim que o site manda os pedidos).
 const app = express();
+app.disable('x-powered-by');   // não conta para ninguém que a API usa Express
+app.set('trust proxy', true);  // na Vercel, pega o IP certo de quem acessa (usado no limite de login)
 app.use(express.json());
 
 // O site e a API moram em endereços diferentes na Vercel.
@@ -41,6 +43,19 @@ app.get('/', (req, res) => {
 });
 
 
+// Rota que não existe: responde em JSON, igual ao resto da API
+app.use((req, res) => {
+    res.status(404).json({ erro: 'Rota não encontrada.' });
+});
+
+// Qualquer outro erro (por exemplo, JSON quebrado no corpo do pedido)
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.parse.failed') {
+        return res.status(400).json({ erro: 'Os dados enviados não estão em JSON válido.' });
+    }
+    console.error(err);
+    res.status(err.status || 500).json({ erro: 'Erro inesperado na API.' });
+});
 // Por último, ligamos a API.
 // No computador, quando vocês rodam "npm start", ela fica escutando na porta 3000.
 // Na Vercel é diferente: a própria Vercel liga a API quando alguém acessa,

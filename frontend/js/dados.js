@@ -1,5 +1,12 @@
 let PRODUTOS = [];
 
+// Troca os sinais que viram código no HTML (< > & " ') por versões seguras.
+// Assim, se alguém cadastrar um produto com código no nome, ele aparece como texto.
+function protegido(texto) {
+  return String(texto ?? '').replace(/[&<>"']/g, sinal =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[sinal]);
+}
+
 async function carregarProdutos() {
   const produtos = await requisicaoAPI('/produtos');
   if (!Array.isArray(produtos)) {
@@ -26,7 +33,10 @@ async function carregarProdutos() {
       preco: Number(produto.preco),
       peso: Number(produto.peso),
       disponivel: Number(produto.disponivel),
-      imagem
+      nome: protegido(produto.nome),
+      descricao: protegido(produto.descricao),
+      categoria: protegido(produto.categoria),
+      imagem: protegido(imagem)
     };
   });
 
@@ -44,3 +54,46 @@ const LOJA = {
   horario: 'Segunda a sábado, das 8h às 18h',
   taxaEntrega: 8.0
 };
+  /* Os dados acima são só a reserva. Os de verdade vêm do painel do Pedro
+   (rota /comercio). Ficam guardados na aba do navegador para a próxima
+   página já abrir certa, e são buscados de novo a cada página. */
+try { Object.assign(LOJA, JSON.parse(sessionStorage.getItem('carvao_loja')) || {}); } catch {}
+
+// "Pedro da Silva ME · CNPJ 12.345.678/0001-90" (Decreto 7.962/2013).
+// Fica vazio enquanto o Pedro não preencher no painel.
+function textoEmpresa() {
+  if (!LOJA.documento) return '';
+  const tipo = LOJA.documento.replace(/\D/g, '').length === 11 ? 'CPF' : 'CNPJ';
+  return `${LOJA.razao_social || LOJA.nome} · ${tipo} ${LOJA.documento}`;
+}
+function preencherEmpresa() {
+  document.querySelectorAll('[data-loja-empresa]').forEach(campo => {
+    campo.textContent = textoEmpresa();
+    campo.hidden = !campo.textContent;
+  });
+}
+// Escreve um dado da loja numa marcação que se atualiza sozinha
+function campoLoja(campo) {
+  return `<span data-loja="${campo}">${escaparHTML(LOJA[campo] || '')}</span>`;
+}
+
+// Busca depois que a página inteira carregou (as outras ferramentas já existem)
+const lojaCarregada = new Promise(pronto => document.addEventListener('DOMContentLoaded', pronto))
+  .then(() => requisicaoAPI('/comercio'))
+  .then(dados => {
+    const novos = {};
+    if (dados.nome_comercio) novos.nome = dados.nome_comercio;
+    if (dados.endereco) novos.endereco = dados.endereco;
+    if (dados.telefone) novos.telefone = dados.telefone;
+    if (dados.horario) novos.horario = dados.horario;
+    novos.razao_social = dados.razao_social || ''; // Nome e CNPJ podem ser apagados no painel, então sempre usamos o que veio
+    novos.documento = dados.documento || '';
+    Object.assign(LOJA, novos);
+    try { sessionStorage.setItem('carvao_loja', JSON.stringify(novos)); } catch {}
+    document.querySelectorAll('[data-loja]').forEach(campo => {
+      campo.textContent = LOJA[campo.dataset.loja] || '';
+    });
+    preencherEmpresa();
+    return LOJA;
+  })
+  .catch(() => LOJA);   // se a API falhar, fica com a reserva

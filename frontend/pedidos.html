@@ -19,7 +19,7 @@
       <div class="pp-page-head">
         <div>
           <h1 class="pp-title">Pedidos</h1>
-          <p class="pp-subtitle">Do pedido enviado à brasa pronta. Acompanhe cada etapa por aqui.</p>
+          <p class="pp-subtitle">Confirme, prepare e conclua os pedidos dos clientes.</p>
         </div>
         <div class="pp-period"><span data-icon="calendar"></span>
           <select class="pp-select" id="order-period" aria-label="Período">
@@ -44,6 +44,17 @@
     <p>O pedido aparece como cancelado para o cliente. Avise-o pelo WhatsApp, se precisar.</p>
     <div class="pp-modal-item plain"><strong id="cancel-title-id"></strong><br><span id="cancel-sub"></span></div>
     <div class="pp-modal-actions"><button class="pp-btn secondary" type="button" id="keep-order" data-close-modal>Manter pedido</button><button class="pp-btn danger" type="button" id="confirm-cancel-order">Sim, cancelar pedido</button></div>
+  </div>
+</div>
+<div class="pp-modal-backdrop" id="code-modal" role="dialog" aria-modal="true" aria-labelledby="code-title">
+  <div class="pp-modal compact">
+    <div class="pp-modal-top" style="margin-bottom:0"><h2 id="code-title">Concluir pedido</h2><button class="pp-modal-x" type="button" data-close-modal aria-label="Fechar" data-icon="x"></button></div>
+    <p id="code-help">Peça ao cliente o código de 4 números que aparece no site para ele.</p>
+    <form id="code-form" novalidate>
+      <div class="pp-field"><label for="code-input">Código de entrega</label><input class="pp-input" id="code-input" inputmode="numeric" maxlength="4" autocomplete="off" aria-describedby="code-help code-error"></div>
+      <p class="pp-code-error" id="code-error" role="alert"></p>
+      <div class="pp-modal-actions"><button class="pp-btn secondary" type="button" data-close-modal>Voltar</button><button class="pp-btn" type="submit">Concluir pedido</button></div>
+    </form>
   </div>
 </div>
 <div class="pp-toast" role="status" aria-live="polite"></div>

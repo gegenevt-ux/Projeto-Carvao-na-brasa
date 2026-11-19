@@ -73,7 +73,7 @@ function desenharProduto(produto) {
         </div>
 
         <p class="dica-entrega">${icone('caminhao')}
-          Entrega por ${formatarPreco(LOJA.taxaEntrega)} em Porto Velho ou retirada grátis. Pagamento na entrega ou na retirada.</p>
+          Entrega por ${formatarPreco(LOJA.taxaEntrega)}, ou retirada grátis na loja. Pague com Pix pelo site, ou com dinheiro ou cartão na entrega.</p>
       </div>
     </div>
 

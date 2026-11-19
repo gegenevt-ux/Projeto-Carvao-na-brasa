@@ -77,7 +77,6 @@
     <a class="pp-brand" href="painel.html"><span class="pp-brand-icon">${icon('flame')}</span><span class="pp-brand-name">CARVÃO DO<br>PEDRO</span></a>
     <span class="pp-sidebar-label">ÁREA DO PEDRO</span>
     <nav class="pp-nav">${nav.map(([id, t, href, ic]) => `<a href="${href}"${id === page ? ' aria-current="page"' : ''}>${icon(ic)}${t}</a>`).join('')}</nav>
-    <div class="pp-side-note">${icon('flame')}<strong>Sua loja, no seu ritmo.</strong><p>Produtos e pedidos organizados em um só lugar.</p></div>
     <div class="pp-user"><span class="pp-avatar">${esc((sessao.nome || 'P').charAt(0).toUpperCase())}</span><span><strong>${esc(sessao.nome || 'Pedro')}</strong><small>Administrador</small></span><button class="pp-logout" type="button" id="pp-logout" title="Sair do painel" aria-label="Sair do painel">${icon('logout')}</button></div>`;
   $('#pp-topbar').innerHTML = `
     <div class="pp-topbar-crumb"><button class="pp-mobile-menu" type="button" aria-label="Abrir menu" data-menu-toggle>${icon('menu')}</button>Carvão do Pedro / ${crumb}</div>
@@ -135,6 +134,9 @@
       fee: Number(o.taxa_entrega) || 0, total: Number(o.total) || 0,
       address: entrega ? [o.endereco_entrega, o.bairro].filter(Boolean).join(' · ') : (enderecoLoja || 'Na loja'),
       note: o.observacao || '', type: entrega ? 'Entrega' : 'Retirada', status: DA_API[o.status] || o.status,
+      payment: ({ pix: 'Pix pelo site', dinheiro: 'Dinheiro', cartao: 'Cartão' })[o.forma_pagamento] || '',
+      change: o.forma_pagamento === 'dinheiro' ? (o.troco_para ? `troco para ${money(Number(o.troco_para))}` : 'sem troco')
+        : o.forma_pagamento === 'pix' ? (Number(o.pago) ? 'pago' : 'aguardando pagamento') : '',
       date: diaLocal(d), time: d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     };
   };
@@ -265,7 +267,7 @@
   }
 
   /* ---------- PEDIDOS ---------- */
-  let orderFilter = 'all', pendingCancelId = null;
+  let orderFilter = 'all', pendingCancelId = null, pendingCodeId = null;
   const footInfo = o => ({
     pending: ['info', 'Aguardando confirmação', ''],
     preparing: ['info', 'Separe os itens e confira as quantidades', ''],
@@ -290,7 +292,7 @@
         <div class="pp-order-body">
           <div><span class="pp-order-label">Cliente</span><strong class="cname">${esc(o.customer)}</strong><p>${icon('phone')}${esc(o.phone)}</p></div>
           <div><span class="pp-order-label">Itens do pedido</span><strong>${esc(o.items)}</strong><p>Subtotal ${money(o.subtotal)}${o.note ? ` · Obs.: ${esc(o.note)}` : ''}</p></div>
-          <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}</p></div>
+          <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}</p><p><a class="pp-link-comprovante" href="comprovante.html?id=${o.id}">Imprimir comprovante</a></p>${o.payment ? `<p>Pagamento: ${esc(o.payment)}${o.change ? ` · ${esc(o.change)}` : ''}</p>` : ''}</div>
           <div class="pp-order-total"><span class="pp-order-label" style="justify-content:flex-end">Total</span><div class="v">${money(o.total)}</div></div>
         </div>
         <div class="pp-order-foot${acts ? '' : ' noact'}"><span class="${cls}">${icon(ic)}${txt}</span>${acts}</div>
@@ -308,14 +310,32 @@
       if (adv) {
         const o = orders.find(x => x.id === Number(adv.dataset.advance)); if (!o) return;
         const proximo = { pending: 'preparing', preparing: 'ready', ready: 'done' }[o.status]; if (!proximo) return;
+         if (proximo === 'done') {   // para concluir, precisa do código que o cliente fala
+          pendingCodeId = o.id; $('#code-input').value = ''; $('#code-error').textContent = '';
+          $('#code-title').textContent = `Concluir pedido #${o.id}`;
+          openModal($('#code-modal'), '#code-input'); return;
+        }
         mudarStatus(o, proximo, adv);
       }
+       
       if (can) {
         const o = orders.find(x => x.id === Number(can.dataset.cancel)); if (!o) return; pendingCancelId = o.id;
         $('#cancel-title-id').textContent = `Pedido #${o.id}`; $('#cancel-sub').textContent = `${o.customer} · ${money(o.total)}`;
         openModal($('#cancel-modal'), '#keep-order');   // o foco começa em "Manter pedido"
       }
     });
+
+     $('#code-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const o = orders.find(x => x.id === pendingCodeId); if (!o) return;
+      const codigo = $('#code-input').value.trim();
+      if (!/^\d{4}$/.test(codigo)) { $('#code-error').textContent = 'Digite os 4 números do código.'; $('#code-input').focus(); return; }
+      try {
+        await api(`/pedidos/${o.id}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'concluido', codigo }) });
+        closeModal($('#code-modal')); pendingCodeId = null;
+        await carregarPedidos(); renderOrders(); toast(`Pedido #${o.id} concluído.`);
+      } catch (erro) { $('#code-error').textContent = erro.message; $('#code-input').select(); }
+     });
     $('#confirm-cancel-order').addEventListener('click', () => {
       const o = orders.find(x => x.id === pendingCancelId); if (!o) return;
       closeModal($('#cancel-modal')); pendingCancelId = null;
@@ -341,6 +361,9 @@
     const d = Object.fromEntries(keys.map(k => [k, $('#store-' + k).value]));
     $('#preview-address').textContent = `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`;
     $('#preview-phone').textContent = d.phone; $('#preview-hours').textContent = d.hours;
+    const doc = $('#store-doc').value.trim(), nums = doc.replace(/\D/g, '');
+    $('#preview-legal').textContent = doc ? `${$('#store-legal').value.trim() || d.name} · ${nums.length === 11 ? 'CPF' : 'CNPJ'} ${doc}` : '';
+    $('#preview-legal-row').hidden = !doc;
   }
   // O banco guarda o endereço numa linha só: "Rua, número · bairro · cidade"
   const separarEndereco = (e = '') => {
@@ -348,10 +371,11 @@
     return m ? { street: m[1], number: m[2], neighborhood: m[3], city: m[4] } : { street: e, number: '', neighborhood: '', city: '' };
   };
   if (page === 'comercio') {
-    keys.forEach(k => $('#store-' + k).addEventListener('input', renderPreview));
+    [...keys, 'legal', 'doc'].forEach(k => $('#store-' + k).addEventListener('input', renderPreview));
     carregarLoja().then(l => {
       const v = { name: l.nome_comercio || '', phone: l.telefone || '', hours: l.horario || '', ...separarEndereco(l.endereco || '') };
       keys.forEach(k => { $('#store-' + k).value = v[k] || ''; });
+       $('#store-legal').value = l.razao_social || ''; $('#store-doc').value = l.documento || '';
       renderPreview();
     });
     $('#store-form').addEventListener('submit', async e => {
@@ -361,8 +385,10 @@
       try {
         await api('/comercio', { method: 'PUT', body: JSON.stringify({
           nome_comercio: d.name, telefone: d.phone, horario: d.hours,
-          endereco: `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`
+          endereco: `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`,
+          razao_social: $('#store-legal').value.trim(), documento: $('#store-doc').value.trim()
         }) });
+      const salvo = await carregarLoja(); $('#store-doc').value = salvo.documento || '';   // volta já formatado
         renderPreview(); toast('Dados do comércio salvos.');
       } catch (erro) { toast(erro.message); }
     });

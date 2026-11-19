@@ -765,3 +765,114 @@
 @media (max-width: 560px) {
   .passo { font-size: 11px; }
 }
+
+/* --- Caixa de confirmação (no lugar do confirm() do navegador) --- */
+.caixa-confirmar { margin: auto; border: 0; padding: 0; border-radius: var(--raio-pequeno); overflow: hidden;
+  width: min(440px, calc(100vw - 32px)); color: var(--texto); background: var(--branco);
+  box-shadow: 0 15px 35px rgba(26, 28, 25, .2), 0 5px 15px rgba(0, 0, 0, .08); }
+.caixa-confirmar::backdrop { background: rgba(26, 28, 25, .5); }
+.caixa-confirmar-topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--borda); }
+.caixa-confirmar-topo h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.caixa-confirmar-fechar { border: 0; background: none; color: var(--texto-suave); width: 32px; height: 32px; border-radius: 6px; display: grid; place-items: center; cursor: pointer; margin-right: -6px; }
+.caixa-confirmar-fechar:hover { background: var(--fundo); color: var(--texto); }
+.caixa-confirmar-corpo { padding: 16px 20px 18px; font-size: 14px; color: var(--texto-suave); }
+.caixa-confirmar-corpo p { margin: 0 0 12px; }
+.caixa-confirmar-linha { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--cinza-claro); font-variant-numeric: tabular-nums; }
+.caixa-confirmar-linha span:last-child { color: var(--texto); white-space: nowrap; }
+.caixa-confirmar-total { font-weight: 600; }
+.caixa-confirmar-total span { color: var(--texto); }
+.caixa-confirmar-rodape { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px; background: var(--fundo); border-top: 1px solid var(--borda); }
+.caixa-confirmar-rodape .btn { min-height: 38px; padding: 0 14px; font-size: 14px; }
+.btn-perigo { background: var(--vermelho); }
+.btn-perigo:hover { background: #9E2B15; }
+@media (max-width: 420px) { .caixa-confirmar-rodape { flex-direction: column-reverse; } .caixa-confirmar-rodape .btn { width: 100%; min-height: 44px; } }
+
+/* --- Histórico de pedidos (gaveta em "Meus pedidos") --- */
+.historico { border-top: 1px solid var(--borda); padding-top: 8px; }
+.historico > summary { cursor: pointer; padding: 10px 0; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 8px; }
+.historico > summary::-webkit-details-marker { display: none; }
+.historico > summary::before { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .15s; margin-right: 4px; }
+.historico[open] > summary::before { transform: rotate(45deg); }
+.historico > summary .suave { font-weight: 400; }
+.historico .lista-pedidos { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .historico > summary::before { transition: none; } }
+
+/* --- Páginas de texto (Privacidade, Trocas) --- */
+.texto-legal { max-width: 720px; }
+.texto-legal h2 { font-size: 19px; margin: 32px 0 8px; }
+.texto-legal p, .texto-legal li { font-size: 16px; line-height: 1.65; color: var(--texto); }
+.texto-legal p + p { margin-top: 10px; }
+.texto-legal ul { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 6px; list-style: disc; }
+.texto-legal ul + p { margin-top: 14px; }
+.texto-legal a { color: var(--laranja); text-decoration: underline; text-underline-offset: 2px; }
+.texto-legal .subtitulo-pagina { margin-bottom: 20px; }
+
+/* Links do rodapé e aviso do cadastro */
+.rodape-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 6px; }
+.rodape-links a { color: var(--branco); text-decoration: underline; text-underline-offset: 2px; font-size: 13px; }
+.rodape-links a:hover { color: #F2B48C; }
+@media (min-width: 900px) { .rodape-links { justify-content: flex-end; } }
+.aviso-consentimento { font-size: 13px; color: var(--texto-suave); margin: 4px 0 12px; }
+.aviso-consentimento a { color: var(--laranja); font-weight: 600; text-decoration: underline; }
+
+/* --- Forma de pagamento (finalizar) --- */
+.opcoes-pagamento { grid-template-columns: repeat(3, 1fr); margin-top: 12px; }
+.opcoes-pagamento small { color: var(--texto-suave); }
+.texto-apoio { font-size: 13px; color: var(--texto-suave); margin-top: 4px; }
+.campo-troco { margin-top: 16px; max-width: 280px; }
+.campo-troco[hidden] { display: none; }
+@media (max-width: 560px) { .opcoes-pagamento { grid-template-columns: 1fr; } }
+
+/* --- Recibo do pedido (tela "Pedido enviado") --- */
+.confirmacao { text-align: left; }
+.confirmacao h1 { margin-top: 4px; font-size: 26px; letter-spacing: -.3px; }
+.recibo-numero { font-size: 13px; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+.recibo-aviso { margin-top: 6px; font-size: 14px; color: var(--texto-suave); }
+.recibo-aviso a { color: var(--texto); text-decoration: underline; text-underline-offset: 2px; }
+.recibo { margin-top: 20px; border-top: 1px solid var(--borda); }
+.recibo-linha { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--cinza-claro); font-size: 14px; font-variant-numeric: tabular-nums; }
+.recibo-linha span:last-child { white-space: nowrap; }
+.recibo-total { font-weight: 700; font-size: 16px; border-bottom: 0; }
+.recibo-dados { margin-top: 16px; display: grid; gap: 12px; padding: 16px; background: var(--fundo); border-radius: var(--raio-pequeno); font-size: 14px; }
+.recibo-dados > div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; }
+.recibo-dados dt { color: var(--texto-suave); }
+.recibo-dados dd { margin: 0; }
+.confirmacao .confirmacao-acoes { justify-content: flex-start; margin-top: 24px; }
+@media (max-width: 420px) { .recibo-dados > div { grid-template-columns: 1fr; gap: 2px; } }
+.link-comprovante { display: inline-block; margin-top: 12px; font-size: 14px; }
+
+/* --- Código de entrega --- */
+.caixa-codigo { margin-top: 16px; padding: 14px 16px; border: 1.5px dashed var(--laranja); border-radius: var(--raio-pequeno); background: #FDF4EE; }
+.caixa-codigo-rotulo { display: block; font-size: 13px; font-weight: 600; color: var(--laranja-escuro); text-transform: uppercase; letter-spacing: .4px; }
+.caixa-codigo-numero { display: block; font-size: 30px; font-weight: 800; letter-spacing: 8px; color: var(--texto); font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+.caixa-codigo p { font-size: 14px; color: var(--texto-suave); }
+
+/* --- Pix pelo site (demonstração) --- */
+.caixa-pix { margin-top: 20px; padding: 18px; border: 1px solid var(--borda); border-radius: var(--raio); background: var(--branco); }
+.caixa-pix h2 { font-size: 18px; }
+.caixa-pix-aviso { margin-top: 6px; font-size: 13px; color: var(--texto-suave); background: var(--fundo); padding: 8px 10px; border-radius: var(--raio-pequeno); }
+.caixa-pix-corpo { display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: center; margin-top: 14px; }
+.caixa-pix-corpo label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.caixa-pix-corpo .input { font-size: 12px; font-family: monospace; }
+.caixa-pix-botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.qr-mentira { position: relative; display: grid; grid-template-columns: repeat(21, 1fr); width: 150px; aspect-ratio: 1; padding: 8px; background: #fff; border: 1px solid var(--borda); }
+.qr-mentira i { display: block; }
+.qr-mentira i.cheio { background: #1A1C19; }
+.qr-mentira span { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); background: #fff; padding: 2px 6px; font-size: 12px; font-weight: 800; letter-spacing: 1px; color: var(--laranja-escuro); }
+.aviso-pix-pendente { margin-top: 12px; font-size: 14px; color: var(--texto); }
+.aviso-pix-pendente a { color: var(--laranja); font-weight: 600; text-decoration: underline; }
+@media (max-width: 520px) { .caixa-pix-corpo { grid-template-columns: 1fr; justify-items: start; } }
+
+/* Endereço do rodapé em branco (os dados da loja vêm do painel) */
+.rodape address [data-loja] { color: inherit; font-size: inherit; }
+
+/* Nome e WhatsApp do finalizar: só leitura (vêm da conta) */
+.input[readonly] { background: var(--fundo); color: var(--texto-suave); cursor: default; }
+
+/* --- Página 404 --- */
+.pagina-404 { max-width: 560px; padding-block: 24px 48px; }
+.pagina-404-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 16px; }
+
+/* Nome e CNPJ (ou CPF) de quem vende, no rodapé (Decreto 7.962/2013) */
+.rodape-empresa { margin-top: 4px; }
+.rodape-empresa[hidden] { display: none; }
