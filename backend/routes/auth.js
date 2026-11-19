@@ -7,17 +7,37 @@ const router = express.Router();
 
 const umaLinha = async (sql, args = []) => (await db.execute({ sql, args })).rows[0];
 
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const texto = (valor) => (typeof valor === 'string' ? valor.trim() : '');
+
 router.post('/cadastro', async (req, res) => {
-  const { nome, email, whatsapp, senha } = req.body;
+  const corpo = req.body || {};
+  const nome = texto(corpo.nome);
+  const email = texto(corpo.email).toLowerCase();
+  const whatsapp = texto(corpo.whatsapp);
+  const senha = typeof corpo.senha === 'string' ? corpo.senha : '';
 
   if (!nome || !email || !whatsapp || !senha) {
     return res.status(400).json({ erro: 'Nome, e-mail, WhatsApp e senha são obrigatórios' });
   }
+  if (nome.length < 3 || nome.length > 100) {
+    return res.status(400).json({ erro: 'O nome deve ter entre 3 e 100 caracteres' });
+  }
+  if (email.length > 254 || !EMAIL_VALIDO.test(email)) {
+    return res.status(400).json({ erro: 'Informe um e-mail válido' });
+  }
+  const digitos = whatsapp.replace(/\D/g, '');
+  if (whatsapp.length > 20 || digitos.length < 10 || digitos.length > 11) {
+    return res.status(400).json({ erro: 'Informe o WhatsApp com DDD. Ex.: (69) 99999-9999' });
+  }
+  if (senha.length < 6 || senha.length > 72) {
+    return res.status(400).json({ erro: 'A senha deve ter entre 6 e 72 caracteres' });
+  }
 
   try {
     const jaExiste =
-      (await umaLinha('SELECT id FROM cliente WHERE email = ?', [email])) ||
-      (await umaLinha('SELECT id FROM comerciante WHERE email = ?', [email]));
+      (await umaLinha('SELECT id FROM cliente WHERE lower(email) = ?', [email])) ||
+      (await umaLinha('SELECT id FROM comerciante WHERE lower(email) = ?', [email]));
 
     if (jaExiste) {
       return res.status(409).json({ erro: 'E-mail já cadastrado' });
@@ -41,7 +61,9 @@ router.post('/cadastro', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, senha } = req.body;
+  const corpo = req.body || {};
+  const email = texto(corpo.email).toLowerCase();
+  const senha = typeof corpo.senha === 'string' ? corpo.senha : '';
 
   if (!email || !senha) {
     return res.status(400).json({ erro: 'E-mail e senha são obrigatórios' });
@@ -49,12 +71,12 @@ router.post('/login', async (req, res) => {
 
   try {
     const comerciante = await umaLinha(
-      'SELECT id, nome, email, senha, telefone FROM comerciante WHERE email = ?', [email]
+      'SELECT id, nome, email, senha, telefone FROM comerciante WHERE lower(email) = ?', [email]
     );
 
     const cliente = comerciante
       ? null
-      : await umaLinha('SELECT id, nome, email, senha, whatsapp FROM cliente WHERE email = ?', [email]);
+      : await umaLinha('SELECT id, nome, email, senha, whatsapp FROM cliente WHERE lower(email) = ?', [email]);
 
     const usuario = comerciante || cliente;
     const tipo = comerciante ? 'comerciante' : 'cliente';
