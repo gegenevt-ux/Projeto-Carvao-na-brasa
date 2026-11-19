@@ -140,13 +140,13 @@ O arquivo `.env` com essas chaves não vai para o GitHub.
 
 | Integrante | O que fez |
 |---|---|
-| Getúlio Tavares | coordenação, banco de dados, publicação na Vercel e no Turso, rota de dados da loja |
+| Getúlio Neves Tavares | coordenação, banco de dados, publicação na Vercel e no Turso, rota de dados da loja |
 | Kamylla Rodrigues da Silva | front-end |
-| Kemily Freitas | front-end |
-| Luccas Matheus | cadastro e login |
-| Iran | rotas de produtos |
-| Lumynus - Luciano Blanco | rotas de pedidos |
-| Rubens | área do comerciante |
-| Maria Paiva| protótipo das telas no Figma |
-| Yasmim Síria | documentação |
-| Maria Mendes | testes e demonstrações |
+| Kemily Freitas dos Santos | front-end |
+| Luccas Matheus Silva de Miranda | cadastro e login |
+| Iran Gabriel Sampaio Bezerra | rotas de produtos |
+| Luciano Blanco Rodrigues | rotas de pedidos |
+| Manoel Rubens Ramos Maciel Filho | área do comerciante |
+| Maria Eduarda Paiva Mendonça | protótipo das telas no Figma |
+| Yasmim Síria N de Almeida Pereira | Relatorio/Documentação |
+| Maria Eduarda Mendes | testes e demonstrações |
