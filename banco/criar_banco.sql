@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS "comerciante" (
 	"horario"	TEXT,
 	"razao_social"	TEXT,
 	"documento"	TEXT,
+	"atendimento"	TEXT NOT NULL DEFAULT 'ambos' CHECK("atendimento" IN ('ambos', 'entrega', 'retirada')),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE TABLE IF NOT EXISTS "item_pedido" (
@@ -61,7 +62,7 @@ CREATE TABLE IF NOT EXISTS "produto" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 INSERT INTO "produto" VALUES (1,'Carvão vegetal','Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',18.0,3.0,'Tradicional',1,'assets/img/produto-tradicional-3kg.jpg');
-INSERT INTO "produto" VALUES (2,'Carvão vegetal','O tamanho certo para reunir a turma ao redor da churrasqueira. Carvão selecionado em pedaços, com brasa duradoura para você aproveitar cada momento.',28.0,5.0,'Tradicional',1,'assets/img/produto-tradicional-5kg.jpg');
+INSERT INTO "produto" VALUES (2,'Carvão vegetal','O tamanho certo para reunir a turma ao redor da churrasqueira. Carvão selecionado em pedaços, com brasa duradoura para você aproveitar cada momento.',28.0,5.0,'Faveiro',1,'assets/img/produto-tradicional-5kg.jpg');
 INSERT INTO "produto" VALUES (3,'Carvão vegetal','Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',18.0,5.0,'Misto',1,'assets/img/produto-misto-5kg.jpeg');
 INSERT INTO "produto" VALUES (4,'Carvão vegetal','Pacote prático para o churrasco de fim de semana. Acende rápido e garante brasa firme para a família.',18.0,10.0,'Misto',0,'assets/img/produto-misto-10kg.jpeg');
 INSERT INTO "produto" VALUES (5,'Carvão vegetal premium','Um pacote maior para churrascos que pedem mais tempo de brasa. Carvão selecionado em pedaços grandes, pensado para encontros com a turma toda.',52.0,10.0,'Premium',1,'assets/img/produto-premium-10kg.jpeg');
