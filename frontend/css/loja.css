@@ -876,3 +876,9 @@
 /* Nome e CNPJ (ou CPF) de quem vende, no rodapé (Decreto 7.962/2013) */
 .rodape-empresa { margin-top: 4px; }
 .rodape-empresa[hidden] { display: none; }
+
+/* Opção de recebimento que a loja não faz (entrega ou retirada) */
+.opcao[hidden], #aviso-atendimento[hidden] { display: none; }
+
+/* Compartilhar produto */
+.compartilhar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; }

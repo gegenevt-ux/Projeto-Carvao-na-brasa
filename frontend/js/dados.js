@@ -16,6 +16,7 @@ async function carregarProdutos() {
   const imagensLocais = {
     'tradicional-3': 'assets/img/produto-tradicional-3kg.jpg',
     'tradicional-5': 'assets/img/produto-tradicional-5kg.jpg',
+    'faveiro-5': 'assets/img/produto-tradicional-5kg.jpg',
     'misto-5': 'assets/img/produto-misto-5kg.jpeg',
     'misto-10': 'assets/img/produto-misto-10kg.jpeg',
     'premium-10': 'assets/img/produto-premium-10kg.jpeg'
@@ -49,10 +50,11 @@ async function carregarProdutos() {
    (No banco isso vem da tabela "comerciante".) */
 const LOJA = {
   nome: 'Carvão do Pedro',
-  endereco: 'Rua das Castanheiras, 120 · Centro · Porto Velho/RO',
+  endereco: 'Rua Joaquim da Rocha, 5270 · Castanheira · Porto Velho/RO',
   telefone: '(69) 99999-0000',
   horario: 'Segunda a sábado, das 8h às 18h',
-  taxaEntrega: 8.0
+  taxaEntrega: 8.0,
+  atendimento: 'ambos'   // 'ambos', 'entrega' ou 'retirada' (o Pedro escolhe no painel)
 };
   /* Os dados acima são só a reserva. Os de verdade vêm do painel do Pedro
    (rota /comercio). Ficam guardados na aba do navegador para a próxima
@@ -88,6 +90,7 @@ const lojaCarregada = new Promise(pronto => document.addEventListener('DOMConten
     if (dados.horario) novos.horario = dados.horario;
     novos.razao_social = dados.razao_social || ''; // Nome e CNPJ podem ser apagados no painel, então sempre usamos o que veio
     novos.documento = dados.documento || '';
+    novos.atendimento = dados.atendimento || 'ambos';
     Object.assign(LOJA, novos);
     try { sessionStorage.setItem('carvao_loja', JSON.stringify(novos)); } catch {}
     document.querySelectorAll('[data-loja]').forEach(campo => {

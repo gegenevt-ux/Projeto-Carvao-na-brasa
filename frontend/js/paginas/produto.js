@@ -74,12 +74,36 @@ function desenharProduto(produto) {
 
         <p class="dica-entrega">${icone('caminhao')}
           Entrega por ${formatarPreco(LOJA.taxaEntrega)}, ou retirada grátis na loja. Pague com Pix pelo site, ou com dinheiro ou cartão na entrega.</p>
+          <div class="compartilhar">
+          <button type="button" class="btn btn-contorno" id="compartilhar">Compartilhar produto</button>
+          <span class="texto-apoio" id="aviso-compartilhar" role="status"></span>
+        </div>
       </div>
     </div>
 
     <p style="margin-top: 32px"><a class="link-laranja" href="catalogo.html">${icone('voltar')} Continuar comprando</a></p>`;
 
   ativarCompra(produto, disponivel);
+  ativarCompartilhar(nomeCompleto);
+}
+// Compartilha o link deste produto: no celular abre o menu de compartilhar
+// (WhatsApp, Instagram...); no computador copia o link.
+function ativarCompartilhar(nome) {
+  const botao = document.getElementById('compartilhar');
+  const aviso = document.getElementById('aviso-compartilhar');
+  botao.addEventListener('click', async () => {
+    const dados = { title: `${nome} · ${LOJA.nome}`, text: `Olha este carvão do ${LOJA.nome}:`, url: location.href };
+    if (navigator.share) {
+      try { await navigator.share(dados); } catch { /* a pessoa fechou o menu */ }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(location.href);
+      aviso.textContent = 'Link copiado. Agora é só colar onde quiser.';
+    } catch {
+      aviso.textContent = `Copie o link: ${location.href}`;
+    }
+  });
 }
 
 function ativarCompra(produto, disponivel) {

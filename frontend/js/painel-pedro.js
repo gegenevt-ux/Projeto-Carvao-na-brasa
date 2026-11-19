@@ -76,11 +76,11 @@
   $('#pp-sidebar').innerHTML = `
     <a class="pp-brand" href="painel.html"><span class="pp-brand-icon">${icon('flame')}</span><span class="pp-brand-name">CARVÃO DO<br>PEDRO</span></a>
     <span class="pp-sidebar-label">ÁREA DO PEDRO</span>
-    <nav class="pp-nav">${nav.map(([id, t, href, ic]) => `<a href="${href}"${id === page ? ' aria-current="page"' : ''}>${icon(ic)}${t}</a>`).join('')}</nav>
+    <nav class="pp-nav">${nav.map(([id, t, href, ic]) => `<a href="${href}"${id === page ? ' aria-current="page"' : ''}>${icon(ic)}${t}${id === 'pedidos' ? '<span class="pp-nav-count" id="pp-nav-count" hidden></span>' : ''}</a>`).join('')}</nav>
     <div class="pp-user"><span class="pp-avatar">${esc((sessao.nome || 'P').charAt(0).toUpperCase())}</span><span><strong>${esc(sessao.nome || 'Pedro')}</strong><small>Administrador</small></span><button class="pp-logout" type="button" id="pp-logout" title="Sair do painel" aria-label="Sair do painel">${icon('logout')}</button></div>`;
   $('#pp-topbar').innerHTML = `
     <div class="pp-topbar-crumb"><button class="pp-mobile-menu" type="button" aria-label="Abrir menu" data-menu-toggle>${icon('menu')}</button>Carvão do Pedro / ${crumb}</div>
-    <div class="pp-topbar-actions"><a href="index.html" target="_blank" rel="noopener">${icon('external')}Ver loja</a><span title="Notificações">${icon('bell')}</span></div>`;
+    <div class="pp-topbar-actions"><a href="index.html" target="_blank" rel="noopener">${icon('external')}Ver loja</a><a class="pp-bell" id="pp-bell" href="pedidos.html" aria-label="Pedidos pendentes: nenhum">${icon('bell')}<span class="pp-bell-count" id="pp-bell-count" hidden></span></a></div>`;
   $('#pp-footer').innerHTML = '<span>Carvão do Pedro · Gestão do comércio</span>';
   paintIcons();
 
@@ -96,7 +96,30 @@
     if (undo) $('button', toastEl).onclick = () => { toastEl.classList.remove('show'); undo(); };
     toastEl.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => toastEl.classList.remove('show'), undo ? 6000 : 2800);
   };
-
+  /* ---------- Aviso de pedido novo (em todas as telas do painel) ----------
+     A cada 30 segundos pergunta à API quantos pedidos estão pendentes.
+     Mostra o número na campainha e no menu "Pedidos", no título da aba,
+     e avisa quando chega um pedido que ainda não tinha aparecido. */
+  const tituloBase = document.title;
+  let maiorPedidoVisto = null;
+  async function verificarPedidosNovos() {
+    let pendentes;
+    try { pendentes = await api('/pedidos?status=pendente'); } catch { return; }
+    const qtd = pendentes.length;
+    const texto = qtd ? String(qtd) : '';
+    ['#pp-bell-count', '#pp-nav-count'].forEach(sel => { const el = $(sel); if (el) { el.textContent = texto; el.hidden = !qtd; } });
+    $('#pp-bell').setAttribute('aria-label', `Pedidos pendentes: ${qtd || 'nenhum'}`);
+    document.title = (qtd ? `(${qtd}) ` : '') + tituloBase;
+    const maior = Math.max(0, ...pendentes.map(o => Number(o.id)));
+    if (maiorPedidoVisto !== null && maior > maiorPedidoVisto) {
+      toast(`Chegou um pedido novo: #${maior}.`);
+      document.dispatchEvent(new CustomEvent('pedido-novo'));
+    }
+    maiorPedidoVisto = Math.max(maiorPedidoVisto || 0, maior);
+  }
+  verificarPedidosNovos();
+  setInterval(verificarPedidosNovos, 30000);
+   
   /* ---------- Janelas ---------- */
   const openModal = (m, focusSel) => { m.classList.add('open'); setTimeout(() => $(focusSel, m)?.focus(), 30); };
   const closeModal = m => m.classList.remove('open');
@@ -275,6 +298,14 @@
     done: ['circlecheck', 'Pedido concluído · sem ações pendentes', 'ok'],
     cancelled: ['circlex', 'Pedido cancelado · sem ações disponíveis', 'bad']
   }[o.status]);
+   // Abre o WhatsApp do cliente com uma mensagem pronta sobre o pedido
+  function linkWhatsApp(o) {
+    let numero = String(o.phone || '').replace(/\D/g, '');
+    if (numero.length < 10) return '';
+    if (numero.length <= 11) numero = '55' + numero;
+    const msg = `Olá, ${o.customer}! Aqui é do Carvão do Pedro, sobre o seu pedido #${o.id}.`;
+    return `<p><a class="pp-link-whatsapp" href="https://wa.me/${numero}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" aria-label="Chamar ${esc(o.customer)} no WhatsApp (abre em outra aba)">Chamar no WhatsApp</a></p>`;
+  }
   function renderOrders() {
     if (page !== 'pedidos') return;
     const period = $('#order-period').value;
@@ -290,7 +321,7 @@
       return `<article class="pp-card pp-order">
         <div class="pp-order-head"><div class="l"><span class="pp-order-id">Pedido #${o.id}</span>${badge(o.status)}</div><span class="pp-order-date">${dataBR(o.date)} · ${o.time}</span></div>
         <div class="pp-order-body">
-          <div><span class="pp-order-label">Cliente</span><strong class="cname">${esc(o.customer)}</strong><p>${icon('phone')}${esc(o.phone)}</p></div>
+          <div><span class="pp-order-label">Cliente</span><strong class="cname">${esc(o.customer)}</strong><p>${icon('phone')}${esc(o.phone)}</p>${linkWhatsApp(o)}</div>
           <div><span class="pp-order-label">Itens do pedido</span><strong>${esc(o.items)}</strong><p>Subtotal ${money(o.subtotal)}${o.note ? ` · Obs.: ${esc(o.note)}` : ''}</p></div>
           <div><span class="pp-order-label">${icon(o.type === 'Retirada' ? 'store' : 'truck')}${o.type === 'Retirada' ? 'Retirada na loja' : 'Entrega'}</span><strong>${esc(o.address)}</strong><p>Taxa ${money(o.fee)}</p><p><a class="pp-link-comprovante" href="comprovante.html?id=${o.id}">Imprimir comprovante</a></p>${o.payment ? `<p>Pagamento: ${esc(o.payment)}${o.change ? ` · ${esc(o.change)}` : ''}</p>` : ''}</div>
           <div class="pp-order-total"><span class="pp-order-label" style="justify-content:flex-end">Total</span><div class="v">${money(o.total)}</div></div>
@@ -300,6 +331,8 @@
     }).join('') : '<div class="pp-card pp-empty">Nenhum pedido encontrado para este filtro.</div>';
   }
   if (page === 'pedidos') {
+     // Pedido novo chegou: atualiza a lista sem precisar recarregar a página
+    document.addEventListener('pedido-novo', () => carregarPedidos().then(renderOrders).catch(() => {}));
     $('#order-filters').addEventListener('click', e => {
       const b = e.target.closest('[data-status]'); if (!b) return;
       orderFilter = b.dataset.status; $$('#order-filters button').forEach(x => x.classList.toggle('active', x === b)); renderOrders();
@@ -376,6 +409,7 @@
       const v = { name: l.nome_comercio || '', phone: l.telefone || '', hours: l.horario || '', ...separarEndereco(l.endereco || '') };
       keys.forEach(k => { $('#store-' + k).value = v[k] || ''; });
        $('#store-legal').value = l.razao_social || ''; $('#store-doc').value = l.documento || '';
+      const servico = $(`[name="store-service"][value="${l.atendimento || 'ambos'}"]`); if (servico) servico.checked = true;
       renderPreview();
     });
     $('#store-form').addEventListener('submit', async e => {
@@ -386,7 +420,8 @@
         await api('/comercio', { method: 'PUT', body: JSON.stringify({
           nome_comercio: d.name, telefone: d.phone, horario: d.hours,
           endereco: `${d.street}, ${d.number} · ${d.neighborhood} · ${d.city}`,
-          razao_social: $('#store-legal').value.trim(), documento: $('#store-doc').value.trim()
+          razao_social: $('#store-legal').value.trim(), documento: $('#store-doc').value.trim(),
+          atendimento: ($('[name="store-service"]:checked') || {}).value || 'ambos'
         }) });
       const salvo = await carregarLoja(); $('#store-doc').value = salvo.documento || '';   // volta já formatado
         renderPreview(); toast('Dados do comércio salvos.');
