@@ -110,6 +110,13 @@ router.post('/', soCliente, async (req, res) => {
   const produtoIds = [...quantidades.keys()];
 
   try {
+    // A loja pode atender só por entrega ou só por retirada (escolhido no painel do Pedro)
+    const loja = await umaLinha('SELECT atendimento FROM comerciante ORDER BY id LIMIT 1');
+    const atendimento = (loja && loja.atendimento) || 'ambos';
+    if (atendimento !== 'ambos' && atendimento !== recebimento) {
+      return res.status(400).json({ erro: atendimento === 'entrega'
+        ? 'No momento a loja só faz entrega.' : 'No momento a loja só atende por retirada.' });
+    }
     const marcadores = produtoIds.map(() => '?').join(',');
     const produtos = await consultar(
       `SELECT id, nome, preco FROM produto WHERE disponivel = 1 AND id IN (${marcadores})`,
