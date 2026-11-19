@@ -11,10 +11,16 @@ async function requisicaoAPI(caminho, opcoes = {}) {
     cabecalhos.Authorization = `Bearer ${sessao.token}`;
   }
 
-  const resposta = await fetch(`${API_BASE_URL}${caminho}`, {
-    ...opcoes,
-    headers: cabecalhos
-  });
+  let resposta;
+  try {
+    resposta = await fetch(`${API_BASE_URL}${caminho}`, {
+      ...opcoes,
+      headers: cabecalhos
+    });
+  } catch {
+    // Sem internet ou a API fora do ar: o navegador só diz "Failed to fetch", em inglês
+    throw new Error('Não foi possível falar com a loja agora. Confira sua internet e tente de novo.');
+  }
   const texto = await resposta.text();
   let dados = null;
 
