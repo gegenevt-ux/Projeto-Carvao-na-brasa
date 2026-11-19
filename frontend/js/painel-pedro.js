@@ -422,6 +422,7 @@
       e.preventDefault();
       const d = Object.fromEntries(keys.map(k => [k, $('#store-' + k).value.trim()]));
       if (keys.some(k => !d[k])) { toast('Preencha todos os campos.'); return; }
+      const botaoSalvar = $('#store-form button[type=submit]'); botaoSalvar.disabled = true;   // evita salvar duas vezes
       try {
         await api('/comercio', { method: 'PUT', body: JSON.stringify({
           nome_comercio: d.name, telefone: d.phone, horario: d.hours,
@@ -432,6 +433,7 @@
       const salvo = await carregarLoja(); $('#store-doc').value = salvo.documento || '';   // volta já formatado
         renderPreview(); toast('Dados do comércio salvos.');
       } catch (erro) { toast(erro.message); }
+       finally { botaoSalvar.disabled = false; }
     });
   }
 
