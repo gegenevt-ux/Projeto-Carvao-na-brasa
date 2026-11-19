@@ -37,6 +37,16 @@
             <div class="pp-field"><label for="store-doc">CNPJ ou CPF</label><input class="pp-input" id="store-doc" inputmode="numeric" placeholder="00.000.000/0000-00" aria-describedby="store-legal-help"></div>
           </div>
           <hr class="pp-divider">
+            <fieldset class="pp-atendimento">
+            <legend><h3>Como você atende</h3></legend>
+            <p class="sub">O cliente só vê as opções que você marcar aqui.</p>
+            <div class="pp-atendimento-opcoes">
+              <label><input type="radio" name="store-service" value="ambos" checked><span><strong>Entrega e retirada</strong><small>O cliente escolhe</small></span></label>
+              <label><input type="radio" name="store-service" value="entrega"><span><strong>Só entrega</strong><small>Não aparece retirada</small></span></label>
+              <label><input type="radio" name="store-service" value="retirada"><span><strong>Só retirada</strong><small>Não aparece entrega</small></span></label>
+            </div>
+          </fieldset>
+          <hr class="pp-divider">
           <h3>Endereço da loja</h3>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr;gap:26px 14px">
             <div class="pp-field" style="grid-column:span 5"><label for="store-street">Rua / avenida</label><input class="pp-input" id="store-street"></div>
