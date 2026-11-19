@@ -70,7 +70,26 @@ async function iniciarFinalizacao() {
   form.querySelectorAll('[name="recebimento"]').forEach(radio =>
     radio.addEventListener('change', atualizarRecebimento));
   atualizarRecebimento();
-
+  
+  // A loja pode atender só por entrega ou só por retirada (o Pedro escolhe no painel).
+  // A opção que a loja não faz some, e a outra fica marcada.
+  function aplicarAtendimento() {
+    const so = LOJA.atendimento || 'ambos';
+    ['entrega', 'retirada'].forEach(tipo => {
+      const radio = document.getElementById(`op-${tipo}`);
+      const fora = so !== 'ambos' && so !== tipo;
+      radio.disabled = fora;
+      radio.closest('.opcao').hidden = fora;
+    });
+    if (so !== 'ambos') document.getElementById(`op-${so}`).checked = true;
+    const aviso = document.getElementById('aviso-atendimento');
+    aviso.hidden = so === 'ambos';
+    aviso.textContent = so === 'entrega' ? 'No momento a loja só faz entrega.'
+      : so === 'retirada' ? 'No momento a loja só atende por retirada.' : '';
+    atualizarRecebimento();
+  }
+  aplicarAtendimento();
+  lojaCarregada.then(aplicarAtendimento);
   // "100", "100,00" ou "R$ 100" viram 100
   const lerValor = texto => Number(String(texto).replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3})/g, '').replace(',', '.'));
 
